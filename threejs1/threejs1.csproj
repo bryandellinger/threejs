@@ -1,0 +1,437 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3D4FB3D2-C1EF-4283-A5C8-79B6364E80C4}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>threejs1</RootNamespace>
+    <AssemblyName>threejs1</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.0.1011, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.1.2.3\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.1.2.3\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.1.2.3\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.1.2.3\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=1.2.3.246, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.1.2.3\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=1.2.3.490, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\face.png" />
+    <Content Include="assets\models\alien.js" />
+    <Content Include="assets\models\alien.png" />
+    <Content Include="assets\models\aspirin.pdb" />
+    <Content Include="assets\models\buffalo.js" />
+    <Content Include="assets\models\buffalo.png" />
+    <Content Include="assets\models\butterfly-jos-blend-2.js" />
+    <Content Include="assets\models\butterfly-jos-blend.js" />
+    <Content Include="assets\models\butterfly.js" />
+    <Content Include="assets\models\butterflywings.png" />
+    <Content Include="assets\models\coffee_machine.js" />
+    <Content Include="assets\models\dae\images\black.jpg" />
+    <Content Include="assets\models\dae\images\default_specular.jpg" />
+    <Content Include="assets\models\dae\images\out_0_6E339CC8.png" />
+    <Content Include="assets\models\dae\images\panneau_col.jpg" />
+    <Content Include="assets\models\dae\images\RooftilesWood0005_2_S.jpg" />
+    <Content Include="assets\models\dae\images\RooftilesWood0005_2_Sspec.jpg" />
+    <Content Include="assets\models\dae\images\white.jpg" />
+    <Content Include="assets\models\dae\images\WoodPlanksBare0002_1_S.jpg" />
+    <Content Include="assets\models\dae\images\WoodPlanksBare0002_1_Sspec.jpg" />
+    <Content Include="assets\models\dae\images\WoodRough0106_2_S.jpg" />
+    <Content Include="assets\models\dae\images\WoodRough0106_2_Spec.jpg" />
+    <Content Include="assets\models\dae\images\yellow.jpg" />
+    <Content Include="assets\models\dae\tex\Grass.JPG" />
+    <Content Include="assets\models\dae\tex\Grass_alph.JPG" />
+    <Content Include="assets\models\dae\tex\TrckGR.png" />
+    <Content Include="assets\models\dae\tex\TrckGRNrml.jpg" />
+    <Content Include="assets\models\dae\tex\TruckR.png" />
+    <Content Include="assets\models\dae\tex\TruckRNrml.jpg" />
+    <Content Include="assets\models\diamond.pdb" />
+    <Content Include="assets\models\hand-1.js" />
+    <Content Include="assets\models\hand-2.js" />
+    <Content Include="assets\models\horse.js" />
+    <Content Include="assets\models\mechanika_espresso_texture.png" />
+    <Content Include="assets\models\MinecraftSteve.js" />
+    <Content Include="assets\models\misc_chair01.js" />
+    <Content Include="assets\models\misc_chair01_col.jpg" />
+    <Content Include="assets\models\monster.jpg" />
+    <Content Include="assets\models\readme.txt" />
+    <Content Include="assets\models\rigged-2.js" />
+    <Content Include="assets\models\rigged_hand-3.js" />
+    <Content Include="assets\models\rigged_hand-4.js" />
+    <Content Include="assets\models\rigged_hand-5.js" />
+    <Content Include="assets\models\rigged_hand.js" />
+    <Content Include="assets\textures\ground\grasslight-big.jpg" />
+    <Content Include="assets\textures\lensflare\hexangle.png" />
+    <Content Include="assets\textures\lensflare\lensflare0.png" />
+    <Content Include="assets\textures\lensflare\lensflare0_alpha.png" />
+    <Content Include="assets\textures\lensflare\lensflare1.png" />
+    <Content Include="assets\textures\lensflare\lensflare2.png" />
+    <Content Include="assets\textures\lensflare\lensflare3.png" />
+    <Content Include="assets\textures\lensflare\lensflare4.jpg" />
+    <Content Include="assets\textures\particles\raindrop-1.png" />
+    <Content Include="assets\textures\particles\raindrop-2.png" />
+    <Content Include="assets\textures\particles\raindrop-3.png" />
+    <Content Include="assets\textures\particles\snowflake1.png" />
+    <Content Include="assets\textures\particles\snowflake2.png" />
+    <Content Include="assets\textures\particles\snowflake3.png" />
+    <Content Include="assets\textures\particles\snowflake4.png" />
+    <Content Include="assets\textures\particles\snowflake5.png" />
+    <Content Include="assets\textures\particles\sprite-sheet.png" />
+    <Content Include="assets\textures\particles\two_drops.jpg" />
+    <Content Include="assets\textures\planets\earth-specular.gif" />
+    <Content Include="assets\textures\planets\earth.jpg" />
+    <Content Include="assets\textures\planets\Earth.png" />
+    <Content Include="assets\textures\planets\EarthNormal.png" />
+    <Content Include="assets\textures\planets\EarthSpec.png" />
+    <Content Include="assets\textures\planets\Mars-normalmap_2k.png" />
+    <Content Include="assets\textures\planets\mars_1k_color.jpg" />
+    <Content Include="assets\textures\planets\mars_1k_normal.jpg" />
+    <Content Include="assets\textures\planets\Mars_2k-050104.png" />
+    <Content Include="content\main.css" />
+    <Content Include="Global.asax" />
+    <Content Include="libs\ai.0.15.0-build58334.js" />
+    <Content Include="libs\ai.0.15.0-build58334.min.js" />
+    <Content Include="libs\ammo.js" />
+    <Content Include="libs\AsciiEffect.js" />
+    <Content Include="libs\AssimpJSONLoader.js" />
+    <Content Include="libs\AWDLoader.js" />
+    <Content Include="libs\BabylonLoader.js" />
+    <Content Include="libs\CanvasRenderer.js" />
+    <Content Include="libs\chroma.js" />
+    <Content Include="libs\coffee-script.js" />
+    <Content Include="libs\ColladaLoader.js" />
+    <Content Include="libs\ConvexGeometry.js" />
+    <Content Include="libs\CopyShader.js" />
+    <Content Include="libs\ctm.js" />
+    <Content Include="libs\CTMLoader.js" />
+    <Content Include="libs\CTMWorker.js" />
+    <Content Include="libs\d3-threeD.js" />
+    <Content Include="libs\dat.gui.js" />
+    <Content Include="libs\DDSLoader.js" />
+    <Content Include="libs\EffectComposer.js" />
+    <Content Include="libs\FirstPersonControls.js" />
+    <Content Include="libs\FlyControls.js" />
+    <Content Include="libs\FXAAShader.js" />
+    <Content Include="libs\GeometryExporter.js" />
+    <Content Include="libs\glTF-parser.js" />
+    <Content Include="libs\glTFAnimation.js" />
+    <Content Include="libs\glTFLoader.js" />
+    <Content Include="libs\glTFLoaderUtils.js" />
+    <Content Include="libs\jquery-1.9.0.js" />
+    <Content Include="libs\JSONLoader.js" />
+    <Content Include="libs\JSONLoader_old.js" />
+    <Content Include="libs\lzma.js" />
+    <Content Include="libs\MaskPass.js" />
+    <Content Include="libs\MD2Character.js" />
+    <Content Include="libs\MTLLoader.js" />
+    <Content Include="libs\OBJLoader.js" />
+    <Content Include="libs\OBJMTLLoader.js" />
+    <Content Include="libs\OrbitControls.js" />
+    <Content Include="libs\ParametricGeometries.js" />
+    <Content Include="libs\PDBLoader.js" />
+    <Content Include="libs\perlin.js" />
+    <Content Include="libs\physi.js" />
+    <Content Include="libs\physijs_worker.js" />
+    <Content Include="libs\PLYLoader.js" />
+    <Content Include="libs\Projector.js" />
+    <Content Include="libs\PVRLoader.js" />
+    <Content Include="libs\RaytracingRenderer.js" />
+    <Content Include="libs\RenderPass.js" />
+    <Content Include="libs\RollControls.js" />
+    <Content Include="libs\SceneExporter.js" />
+    <Content Include="libs\SceneLoader.js" />
+    <Content Include="libs\ShaderDeferred.js" />
+    <Content Include="libs\ShaderPass.js" />
+    <Content Include="libs\sketch.js" />
+    <Content Include="libs\spin.js" />
+    <Content Include="libs\stats.js" />
+    <Content Include="libs\STLLoader.js" />
+    <Content Include="libs\TGALoader.js" />
+    <Content Include="libs\three.js" />
+    <Content Include="libs\three.min.js" />
+    <Content Include="libs\ThreeBSP.js" />
+    <Content Include="libs\TrackballControls.js" />
+    <Content Include="libs\tween.min.js" />
+    <Content Include="libs\VRMLLoader.js" />
+    <Content Include="libs\VTKLoader.js" />
+    <Content Include="libs\WebGLDeferredRenderer.js" />
+    <Content Include="scripts\ai.0.15.0-build58334.js" />
+    <Content Include="scripts\ai.0.15.0-build58334.min.js" />
+    <Content Include="scripts\ammo.js" />
+    <Content Include="scripts\AsciiEffect.js" />
+    <Content Include="scripts\AssimpJSONLoader.js" />
+    <Content Include="scripts\AWDLoader.js" />
+    <Content Include="scripts\BabylonLoader.js" />
+    <Content Include="scripts\bigscreen.min.js" />
+    <Content Include="scripts\bullet.js" />
+    <Content Include="scripts\CanvasRenderer.js" />
+    <Content Include="scripts\chroma.js" />
+    <Content Include="scripts\coffee-script.js" />
+    <Content Include="scripts\ColladaLoader.js" />
+    <Content Include="scripts\ConvexGeometry.js" />
+    <Content Include="scripts\dat.gui.js" />
+    <Content Include="scripts\FirstPersonControls.js" />
+    <Content Include="scripts\jquery.js" />
+    <Content Include="scripts\jquery.min.js" />
+    <Content Include="scripts\main.js" />
+    <Content Include="scripts\ParametricGeometries.js" />
+    <Content Include="scripts\player.js" />
+    <Content Include="scripts\pointerlock.js" />
+    <Content Include="scripts\stats.js" />
+    <Content Include="scripts\three.js" />
+    <Content Include="scripts\three.min.js" />
+    <Content Include="views\01-ambient-light.html" />
+    <Content Include="views\01-basic-2d-geometries-plane.html" />
+    <Content Include="views\01-basic-animation.html" />
+    <Content Include="views\01-basic-mesh-material.html" />
+    <Content Include="views\01-basic-scene.html" />
+    <Content Include="views\01-basic-skeleton.html" />
+    <Content Include="views\01-grouping.html" />
+    <Content Include="views\01-particles.html" />
+    <Content Include="views\02-basic-2d-geometries-circle.html" />
+    <Content Include="views\02-depth-material.html" />
+    <Content Include="views\02-merging.html" />
+    <Content Include="views\02-particles-webgl.html" />
+    <Content Include="views\02-point-light.html" />
+    <Content Include="views\02-selecting-objects.html" />
+    <Content Include="views\03-animation-tween.html" />
+    <Content Include="views\03-basic-point-cloud.html" />
+    <Content Include="views\03-load-save-json-object.html" />
+    <Content Include="views\03-spot-light.html" />
+    <Content Include="views\04-directional-light.html" />
+    <Content Include="views\04-geometries.html" />
+    <Content Include="views\04-mesh-normal-material.html" />
+    <Content Include="views\04-program-based-sprites.html" />
+    <Content Include="views\04-trackball-controls-camera.html" />
+    <Content Include="views\05-custom-geometry.html" />
+    <Content Include="views\05-fly-controls-camera.html" />
+    <Content Include="views\05-hemisphere-light.html" />
+    <Content Include="views\05-mesh-face-material.html" />
+    <Content Include="views\06-area-light.html" />
+    <Content Include="views\06-load-obj.html" />
+    <Content Include="views\06-mesh-properties.html" />
+    <Content Include="views\06-rainy-scene.html" />
+    <Content Include="views\07-both-cameras.html" />
+    <Content Include="views\07-first-person-camera.html" />
+    <Content Include="views\07-lensflares.html" />
+    <Content Include="views\07-load-obj-mtl.html" />
+    <Content Include="views\07-mesh-phong-material.html" />
+    <Content Include="views\07-snowy-scene.html" />
+    <Content Include="views\08-binary-operations.html" />
+    <Content Include="views\08-cameras-lookat.html" />
+    <Content Include="views\08-controls-orbit.html" />
+    <Content Include="views\08-load-collada.html" />
+    <Content Include="views\08-shader-material.html" />
+    <Content Include="views\08-sprites.html" />
+    <Content Include="views\09-line-material.html" />
+    <Content Include="views\09-load-stl.html" />
+    <Content Include="views\09-sprites-3D.html" />
+    <Content Include="views\10-load-ctm.html" />
+    <Content Include="views\11-load-vtk.html" />
+    <Content Include="views\12-load-pdb.html" />
+    <Content Include="views\13-load-PLY.html" />
+    <Content Include="views\14-load-awd.html" />
+    <Content Include="views\15-load-assimp.html" />
+    <Content Include="views\16-load-vrml.html" />
+    <Content Include="views\17-load-babylon.html" />
+    <Content Include="views\8539_01_01.html" />
+    <Content Include="views\8539_01_02.html" />
+    <Content Include="views\city.html" />
+    <Content Include="views\click.html" />
+    <Content Include="views\fps.html" />
+    <Content Include="views\mygrouping.html" />
+    <Content Include="views\Rubiks.html" />
+    <Content Include="views\rubiks3.html" />
+    <Content Include="views\wesleysfirstpage.html" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libs\CanvasRenderer.js.1" />
+    <Content Include="libs\ThreeBSP.coffee" />
+    <Content Include="scripts\jquery.min.map" />
+    <Content Include="assets\models\alien.dae" />
+    <Content Include="assets\models\apple.ply" />
+    <Content Include="assets\models\auditt_wheel.ctm" />
+    <Content Include="assets\models\bunny.vtk" />
+    <Content Include="assets\models\butterfly.mtl" />
+    <Content Include="assets\models\butterfly.obj" />
+    <Content Include="assets\models\city.mtl" />
+    <Content Include="assets\models\city.obj" />
+    <Content Include="assets\models\cube1.blend" />
+    <Content Include="assets\models\cubes.dae" />
+    <Content Include="assets\models\dolphins.ply" />
+    <Content Include="assets\models\GuyFawkesMask.ply" />
+    <Content Include="assets\models\GuyFawkesMask_Cycles.mtl" />
+    <Content Include="assets\models\GuyFawkesMask_Cycles.obj" />
+    <Content Include="assets\models\hand.blend" />
+    <Content Include="assets\models\misc_chair01.blend" />
+    <Content Include="assets\models\moai_fixed.vtk" />
+    <Content Include="assets\models\monster.dae" />
+    <Content Include="assets\models\pinecone.mtl" />
+    <Content Include="assets\models\pinecone.obj" />
+    <Content Include="assets\models\SolidHead_2_lowPoly_42k.stl" />
+    <Content Include="assets\models\test.ply" />
+    <Content Include="assets\models\UVCube1.mtl" />
+    <Content Include="assets\models\UVCube1.obj" />
+    <Content Include="assets\models\UVCube2.mtl" />
+    <Content Include="assets\models\UVCube2.obj" />
+    <Content Include="assets\models\dae\Medieval_building.DAE" />
+    <Content Include="assets\models\dae\Truck_dae.dae" />
+    <Content Include="assets\models\dae\tex\TrckGR.tga" />
+    <Content Include="assets\models\dae\tex\TruckR.tga" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>62959</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:62959/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

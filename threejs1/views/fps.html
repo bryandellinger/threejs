@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>FPS Game</title>
+        <link href="../content/main.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div id="start">
+			<div id="instructions" class="center">
+				Click to start
+			</div>
+		</div>
+		<div id="hud" class="hidden">
+			<div id="crosshairs"></div>
+			<div id="upper-right">
+				Health: <span id="health">100</span>
+			</div>
+			<div id="respawn" class="center hidden">
+				You were killed! Respawning in <span class="countdown">3</span>&hellip;
+			</div>
+			<div id="hurt" class="hidden"></div>
+		</div>
+
+       
+        <script src="../scripts/bigscreen.min.js"></script>
+		<script src="../scripts/pointerlock.js"></script>
+		<script src="../scripts/three.min.js"></script>
+		<script src="../scripts/player.js"></script>
+		<script src="../scripts/bullet.js"></script>
+		<script src="../scripts/main.js"></script>
+	</body>
+</html>
