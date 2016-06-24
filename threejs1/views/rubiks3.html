@@ -38,6 +38,7 @@
         var counter1 = 0;
         var counter2 = 0;
         var counter3 = 0;
+ 
         var clicked = false;
 
         var controls = new function () {
@@ -73,6 +74,21 @@
                 self.cClockwiseIn = false;
                 self.cCounterClockwiseIn = !self.cCounterClockwiseIn;
             };
+            //
+            this.changeOrientation = false;
+            this.horizontal = false;
+            this.vertical = true;
+            this.turnHorizontal = function () {
+                self.horizontal = true;
+                self.vertical = false;
+                self.changeOrientation = true;
+            }
+            this.turnVertical = function () {
+                self.horizontal = false;
+                self.vertical = true;
+                self.changeOrientation = true;
+            }
+            
 
         }
 
@@ -95,6 +111,8 @@
         var cSideFolder = gui.addFolder("C Side");
         cSideFolder.add(controls, 'cTurnClockwise');
         cSideFolder.add(controls, 'cTurnCounterClockwise');
+        gui.add(controls, 'turnHorizontal');
+        gui.add(controls, 'turnVertical');
       
 
         // create a scene, that will hold all our elements such as objects, cameras and lights.
@@ -117,59 +135,134 @@
         document.addEventListener('mousedown', onDocumentMouseDown, false);
 
 
-       
+        function getClosest(intersects, intersectsSide2, intersectsSide3) {
+            var distances = []
+            if (intersects.length > 0 && !controls.aClockwiseIn && !controls.aCounterClockwiseIn) {
+                distances.push({ name: "intersects", distance: intersects[0].distance });
+            }
+            if (intersectsSide2.length > 0 && !controls.bClockwiseIn && !controls.bCounterClockwiseIn) {
+                distances.push({ name: "intersectsSide2", distance: intersectsSide2[0].distance });
+            }
+            if (intersectsSide3.length > 0 && !controls.cClockwiseIn && !controls.cCounterClockwiseIn) {
+                distances.push({ name: "intersectsSide3", distance: intersectsSide3[0].distance });
+            }
+          
+            var closest = "none";
+            if (distances.length > 0) {
+                distances.sort(function (a, b) {
+                    return parseFloat(a.distance) - parseFloat(b.distance);
+                });
+                closest = distances[0].name
+            }
+            return closest;
+
+        }
 
             //mousedown function
         function onDocumentMouseDown(event) {
-            console.log('click');
+
+            if (controls.changeOrientation) {
+                //THREE.SceneUtils.detach(side1, scene, totalCube);
+               // THREE.SceneUtils.detach(side2, scene, totalCube);
+                // THREE.SceneUtils.detach(side3, scene, totalCube);
+
+                alert('changin');
+                
+                var cubes = [];
+
+                for (var i = 0; i < side1.children.length; i++) {
+                    cubes.push(side1.children[i]);
+                    THREE.SceneUtils.detach(side1.children[i], side1, scene);
+                }
+
+
+                for (var i = 0; i < side2.children.length; i++) {
+                    cubes.push(side2.children[i]);
+                    THREE.SceneUtils.detach(side2.children[i], side2, scene);
+                }
+
+                for (var i = 0; i < side3.children.length; i++) {
+                    cubes.push(side3.children[i]);
+                    THREE.SceneUtils.detach(side3.children[i], side3, scene);
+                }
+
+                for (var i = 0; i < cubes.length; i++) {
+                    var mycube = cubes[i];
+
+                    if (controls.vertical) {
+                        if (mycube.position.z == -3) {
+                            THREE.SceneUtils.attach(mycube, scene, side1);
+                        }
+                        if (mycube.position.z == 0) {
+                            THREE.SceneUtils.attach(mycube, scene, side2);
+                        }
+                        if (mycube.position.z == 3) {
+                            THREE.SceneUtils.attach(mycube, scene, side3);
+                        }
+                    } else {
+
+
+                        if (mycube.position.x == -3) {
+                            THREE.SceneUtils.attach(mycube, scene, side1);
+                        }
+                        if (mycube.position.x == 0) {
+                            THREE.SceneUtils.attach(mycube, scene, side2);
+                        }
+                        if (mycube.position.x == 3) {
+                            THREE.SceneUtils.attach(mycube, scene, side3);
+                        }
+                    }
+                }
+
+               
+
+                controls.changeOrientation = false;
+                return;
+            }
+           // console.log('click');
             //create a vector from where the person clicked
             var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-            vector = vector.unproject(camera); //unproject the vector from 2D into 3D space
+            vector = vector.unproject(camera); //unproject the vector from 2D into 3D spacre
             //Once we have the point in 3D space representing the mouse's location, we draw a line to it using the Raycaster
             var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
             var intersects = raycaster.intersectObject(side1, true);
-            var numOfobs = intersects.length;
-            console.log(numOfobs);
-            if (numOfobs > 0 && !controls.aClockwiseIn && !controls.aCounterClockwiseIn) {
-                switch (event.which) {
-                    case 1: //left mouse click
-                        controls.aClockwiseIn = !controls.aClockwiseIn;
-                        break;
-                    case 3: // right mouse click
-                        controls.aCounterClockwiseIn = !controls.aCounterClockwiseIn;
-                        break;
-                }
-              
-
-              
-            }
-
             var intersectsSide2 = raycaster.intersectObject(side2, true);
-            console.log('side B ' + intersectsSide2.length);
-            if (intersectsSide2.length > 0 && !controls.bClockwiseIn && !controls.bCounterClockwiseIn) {
-                switch (event.which) {
-                    case 1: //left mouse click
-                        controls.bClockwiseIn = !controls.bClockwiseIn;
-                        break;
-                    case 3: // right mouse click
-                        controls.bCounterClockwiseIn = !controls.bCounterClockwiseIn;
-                        break;
-                }
-            }
-
             var intersectsSide3 = raycaster.intersectObject(side3, true);
-            console.log('side C ' + intersectsSide3.length);
-            if (intersectsSide3.length > 0 && !controls.cClockwiseIn && !controls.cCounterClockwiseIn) {
-                switch (event.which) {
-                    case 1: //left mouse click
-                        controls.cClockwiseIn = !controls.cClockwiseIn;
-                        break;
-                    case 3: // right mouse click
-                        controls.cCounterClockwiseIn = !controls.cCounterClockwiseIn;
-                        break;
-                }
-            }
+            var closestSide = getClosest(intersects, intersectsSide2, intersectsSide3);
+            console.log('closestSide' + closestSide);
+            switch (closestSide) {
+                case 'intersects':
+                    switch (event.which) {
+                        case 1: //left mouse click
+                            controls.aClockwiseIn = !controls.aClockwiseIn;
+                            break;
+                        case 3: // right mouse click
+                            controls.aCounterClockwiseIn = !controls.aCounterClockwiseIn;
+                            break;
+                    }
+                    break;
+                case 'intersectsSide2':
+                    switch (event.which) {
+                        case 1: //left mouse click
+                            controls.bClockwiseIn = !controls.bClockwiseIn;
+                            break;
+                        case 3: // right mouse click
+                            controls.bCounterClockwiseIn = !controls.bCounterClockwiseIn;
+                            break;
+                    }
+                    break;
+                case 'intersectsSide3':
+                    switch (event.which) {
+                        case 1: //left mouse click
+                            controls.cClockwiseIn = !controls.cClockwiseIn;
+                            break;
+                        case 3: // right mouse click
+                            controls.cCounterClockwiseIn = !controls.cCounterClockwiseIn;
+                            break;
+                    }
+                    break;
 
+            }
         }
         
 
@@ -202,10 +295,12 @@
         gpboyw.push(new THREE.MeshBasicMaterial({ color: orange }));
         gpboyw.push(new THREE.MeshBasicMaterial({ color: yellow }));
         gpboyw.push(new THREE.MeshBasicMaterial({ color: white }));
-      
+
+        totalCube = new THREE.Object3D();
         side1 = new THREE.Object3D();
         side2 = new THREE.Object3D();
         side3 = new THREE.Object3D();
+        side1h = new THREE.Object3D();
        
 
         for (var x = 0; x < 3; x++) {
@@ -218,7 +313,8 @@
                     var yp = y * 3 - 3;
                     var zp = z * 3 - 3;
                     cube.position.set(xp, yp, zp)
-                    scene.add(cube);
+                    cube.name = "cube"
+                    totalCube.add(cube);
                     if (z === 0) {
                         side1.add(cube);
                     }
@@ -226,20 +322,20 @@
                         side2.add(cube);
                     }
                     if (z === 2) {
-                        side3.add(cube);
+                       side3.add(cube);
                     }
+                
 
                     
                 }
             }
         }
        
-        scene.add(side1);
-        scene.add(side2);
-        scene.add(side3);
+        totalCube.add(side1);
+        totalCube.add(side2);
+        totalCube.add(side3);
+        scene.add(totalCube);
         
-
-
 
         render();
 
@@ -249,8 +345,11 @@
             stats.update();
 
             if (controls.aClockwiseIn) {
-
-                side1.rotation.z += Math.PI / 180;
+                if (controls.vertical) {
+                    side1.rotation.z += Math.PI / 180;
+                } else {
+                    side1.rotation.x += Math.PI / 180;
+                }
                 counter1++;
                 if (counter1 >= 90) {
                     counter1 = 0;
@@ -258,7 +357,11 @@
                 }
             }
             if (controls.aCounterClockwiseIn) {
-                side1.rotation.z -= Math.PI / 180;
+                if (controls.vertical) {
+                    side1.rotation.z -= Math.PI / 180;
+                } else {
+                    side1.rotation.x -= Math.PI / 180;
+                }
                 counter1++;
    
                 if (counter1 >= 90) { 
@@ -269,7 +372,11 @@
 
             if (controls.bClockwiseIn) {
 
-                side2.rotation.z += Math.PI / 180;
+                if (controls.vertical) {
+                    side2.rotation.z += Math.PI / 180;
+                } else {
+                    side2.rotation.x += Math.PI / 180;
+                }
                 counter2++;
                 if (counter2 >= 90) {
                     counter2 = 0;
@@ -277,7 +384,11 @@
                 }
             }
             if (controls.bCounterClockwiseIn) {
-                side2.rotation.z -= Math.PI / 180;
+                if (controls.vertical) {
+                    side2.rotation.z -= Math.PI / 180;
+                } else {
+                    side2.rotation.x -= Math.PI / 180;
+                }
                 counter2++;
 
                 if (counter2 >= 90) {
@@ -288,7 +399,11 @@
 
             if (controls.cClockwiseIn) {
 
-                side3.rotation.z += Math.PI / 180;
+                if (controls.vertical) {
+                    side3.rotation.z += Math.PI / 180;
+                } else {
+                    side3.rotation.x += Math.PI / 180;
+                }
                 counter3++;
                 if (counter3 >= 90) {
                     counter3 = 0;
@@ -296,7 +411,11 @@
                 }
             }
             if (controls.cCounterClockwiseIn) {
-                side3.rotation.z -= Math.PI / 180;
+                if (controls.vertical) {
+                    side1.rotation.z -= Math.PI / 180;
+                } else {
+                    side1.rotation.x -= Math.PI / 180;
+                }
                 counter3++;
 
                 if (counter3 >= 90) {
@@ -304,6 +423,7 @@
                     controls.cCounterClockwiseIn = false
                 }
             }
+            
 
         
             var delta = clock.getDelta();
