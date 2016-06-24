@@ -80,6 +80,31 @@
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         webGLRenderer.shadowMapEnabled = true;
 
+        //make projector
+        projector = new THREE.Projector();
+
+            //register a listener on the click event for the canvas
+        document.addEventListener('mousedown', onDocumentMouseDown, false);
+
+
+       
+
+            //mousedown function
+        function onDocumentMouseDown(event) {
+            console.log('click');
+            //create a vector from where the person clicked
+            var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+            vector = vector.unproject(camera); //unproject the vector from 2D into 3D space
+            //Once we have the point in 3D space representing the mouse's location, we draw a line to it using the Raycaster
+            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            var intersects = raycaster.intersectObject(side1, true);
+            var numOfobs = intersects.length;
+            console.log(numOfobs);
+            if (numOfobs > 0) {
+                controls.whiteClockwiseIn = !controls.whiteClockwiseIn;
+            }
+
+        }
         
 
         // position and point the camera to the center of the scene
