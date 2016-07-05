@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Maze</title>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script type="text/javascript" src="../libs/three.js"></script>
+    <script type="text/javascript" src="../libs/stats.js"></script>
+    <script type="text/javascript" src="../libs/physi.js"></script>
+    <script type="text/javascript" src="../libs/dat.gui.js"></script>
+    <script type="text/javascript" src="../libs/chroma.js"></script>
+    <script src="../scripts/jquery.min.js"></script>
+    <script type="text/javascript">
+        Physijs.scripts.worker = '../libs/physijs_worker.js';
+        Physijs.scripts.ammo = '../libs/ammo.js';
+
+        var initScene, render, applyForce, setMousePosition, mouse_position,
+             ground_material, box_material,
+             projector, renderer, render_stats, physics_stats, scene, ground, light, camera, box, boxes = [];
+        var stepX = 0;
+        var stepZ = 0;
+        var direction = 1;
+        var ball;
+        var sphereFriction = 0.1;
+        var sphereRestitution = 0.9;
+        var purple = 0xC390D4;
+        var black = 0x000000;
+        var hole = { x: 20, z: -20 };
+
+     
+
+        $(document).keydown(function (event) {
+            if (event.which == 38) {
+                event.preventDefault();
+                stepX -= 0.008
+            }
+            if (event.which == 40) {    
+                event.preventDefault();
+                stepX += 0.008
+            }
+            if (event.which == 39) {
+                event.preventDefault();
+                stepZ -= 0.008
+            }
+            if (event.which == 37) {
+                event.preventDefault();
+                stepZ += 0.008
+            }
+          
+        });
+
+        initScene = function () {
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(new THREE.Color(0x000000));
+            document.getElementById('viewport').appendChild(renderer.domElement);
+            scene = new Physijs.Scene;
+            scene.setGravity(new THREE.Vector3(0, -90, 0));
+
+            camera = new THREE.PerspectiveCamera(
+                    35,
+                    window.innerWidth / window.innerHeight,
+                    1,
+                    1000
+            );
+            camera.position.set(70, 60, 150);
+            camera.lookAt(scene.position);
+            scene.add(camera);
+
+            // Light
+            light = new THREE.SpotLight(0xFFFFFF);
+            light.position.set(20, 200, 50);
+            light.intensity = 2;
+
+
+            scene.add(light);
+
+           // light2 = new THREE.SpotLight(0xFFFFFF);
+            //light2.position.set(0, 200, 50);
+
+
+            //scene.add(light2);
+
+
+            // Materials
+            ground_material = Physijs.createMaterial(
+                    new THREE.MeshPhongMaterial({ map: THREE.ImageUtils.loadTexture('../assets/textures/general/floor-wood.jpg') }),
+                    .9, // high friction
+                    .6 // low restitution
+            );
+            ground_material.map.wrapS = ground_material.map.wrapT = THREE.RepeatWrapping;
+           // ground_material.map.repeat.set(4, 8);
+
+            // Ground
+            ground = new Physijs.BoxMesh(
+                    new THREE.BoxGeometry(100, 1, 100),
+                    ground_material,
+                    0 // mass
+            );
+
+           
+        
+            ground.receiveShadow = true;
+
+           addWall({ width: 2, height: 6, depth: 20, x: 50, y: 0, z: 40, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 20, x: 40, y: 0, z: 40, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 5, x: 45, y: 0, z: 50, rotation: 90 });
+            addWall({ width: 2, height: 6, depth: 20, x: 50, y: 0, z: 0, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 10, x: 40, y: 0, z: 25, rotation: -35 });
+            addWall({ width: 2, height: 6, depth: 10, x: 38, y: 0, z: 15, rotation: 0});
+            addWall({ width: 2, height: 6, depth: 10, x: 40, y: 0, z: 10, rotation: 35 });
+            addWall({ width: 2, height: 6, depth: 20, x: 40, y: 0, z: 0, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 20, x: 32, y: 0, z: -12, rotation: 90 });
+            addWall({ width: 2, height: 6, depth: 20, x: 40, y: 0, z: -40, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 40, x: 3, y: 0, z: -28, rotation: 0 });
+            addWall({ width: 2, height: 6, depth: 20, x: 3, y: 0, z: -8, rotation: 90 });
+          
+
+            function addWall(params) {
+                var wall = new Physijs.BoxMesh(new THREE.BoxGeometry(params.width, params.height, params.depth),
+                 ground_material,
+                 0 // mass
+               );
+                wall.position.x = params.x;
+                wall.position.y = params.y;
+                wall.position.z = params.z;
+                wall.rotation.y += params.rotation * Math.PI / 180;
+                ground.add(wall);
+            }
+
+
+           
+
+            //ball
+            ball = new Physijs.SphereMesh(
+                               new THREE.SphereGeometry(2, 20),
+                               Physijs.createMaterial(
+                                       new THREE.MeshPhongMaterial(
+                                               {
+                                                   color: purple,
+                                                   opacity: 1.0,
+                                                   transparent: false
+                                               }),
+                                       sphereFriction,
+                                      sphereRestitution
+                               )
+                       );
+            ball.position.set(
+                              45,
+                              20,
+                              40
+                      );
+            scene.add(ball);
+
+            
+            createHole(hole);
+
+            function createHole(hole) {
+                cylinder = new Physijs.ConeMesh(
+               new THREE.CylinderGeometry(10, 2, 4, 32),
+                 Physijs.createMaterial(
+                                       new THREE.MeshPhongMaterial(
+                                               {
+                                                   color: black,
+                                                   opacity: 1.0,
+                                                   transparent: false
+                                               }),
+                                       0
+                               )
+                       );
+                cylinder.position.set(
+                                hole.x,
+                                0,
+                                hole.z
+                        );
+
+
+                ground.add(cylinder);
+            }
+
+
+            
+
+        
+
+         
+
+            console.log(ground);
+
+
+            scene.add(ground);
+            requestAnimationFrame(render);
+            scene.simulate();
+
+          
+
+        }
+
+        render = function () {  
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+           // render_stats.update();
+            //ground.rotation.x += 0.002 * direction;
+            ground.rotation.x = stepX * direction;
+            ground.rotation.z = stepZ * direction;
+
+            var distance = Math.sqrt(Math.pow(hole.x - ball.position.x, 2) + Math.pow(hole.z - ball.position.z, 2))
+            if (distance < 9)
+            {
+                ball.position.y -= 1
+                ball.__dirtyPosition = true;
+            }
+                //Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1-y2,2))
+
+           // if (ground.rotation.x < -0.4) direction = 1;
+            //  if (ground.rotation.x > 0.4) direction = -1;
+            if (ball.position.y < -20) {
+                ball.position.set(
+                                45,
+                              20,
+                              40
+                         );
+                ball.__dirtyPosition = true;
+                ball.setLinearVelocity(new THREE.Vector3(0, 0, 0));
+                ball.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+                return;
+            }
+            ground.__dirtyRotation = true;
+            scene.simulate(undefined, 1);
+        };
+
+        window.onload = initScene;
+    </script>
+    </head>
+    <body>
+        <div id="viewport"></div>
+    </body>
+    </html>
