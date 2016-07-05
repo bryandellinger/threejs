@@ -19,7 +19,12 @@
     </style>
 </head>
 <body>
-
+    <p style="text-align: center">left click rotate clockwise, right click counterclockwise</p>
+    <p style="text-align: center">click drag off cube to rotate camera. mouse wheel to zoom camera</p>
+    <p style="text-align: center"> Orientation: 
+    <input type="radio" name="orientation" value="vertical" checked />Vertical
+    <input type="radio" name="orientation" value="horizontal" />Horizontal
+    </p>
     <div id="Stats-output">
     </div>
     <!-- Div which will hold the Output -->
@@ -111,8 +116,7 @@
         var cSideFolder = gui.addFolder("C Side");
         cSideFolder.add(controls, 'cTurnClockwise');
         cSideFolder.add(controls, 'cTurnCounterClockwise');
-        gui.add(controls, 'turnHorizontal');
-        gui.add(controls, 'turnVertical');
+      
       
 
         // create a scene, that will hold all our elements such as objects, cameras and lights.
@@ -158,66 +162,87 @@
 
         }
 
+        $('input[type=radio][name=orientation]').change(function () {
+            controls.changeOrientation = true
+            if (this.value == 'vertical') {
+                controls.vertical = true;
+                controls.horizontal = false;
+            }
+            else if (this.value == 'horizontal') {
+                controls.vertical = false;
+                controls.horizontal = true;
+            }
+
+
+            var cubes = [];
+
+            for (var i = 0; i < side1.children.length; i++) {
+                cubes.push(side1.children[i]);
+                //THREE.SceneUtils.detach(side1.children[i], side1, scene);
+            }
+
+
+            for (var i = 0; i < side2.children.length; i++) {
+                cubes.push(side2.children[i]);
+                //THREE.SceneUtils.detach(side2.children[i], side2, scene);
+            }
+
+            for (var i = 0; i < side3.children.length; i++) {
+                cubes.push(side3.children[i]);
+                //THREE.SceneUtils.detach(side3.children[i], side3, scene);
+            }
+            console.log('num of cubes ' + cubes.length)
+
+        
+            THREE.SceneUtils.detach(side1, totalCube, scene);
+            THREE.SceneUtils.detach(side2, totalCube, scene);
+            THREE.SceneUtils.detach(side3, totalCube, scene);
+
+            for (var i = 0; i < cubes.length; i++) {
+                var mycube = cubes[i];
+                mycube.position.set(Math.round(mycube.position.x), Math.round(mycube.position.y), Math.round(mycube.position.z))
+                console.log(' position ' + mycube.position.x + '.' + mycube.position.y + '.' + mycube.position.z)
+
+                if (controls.vertical) {
+                    if (mycube.position.z == -3) {
+                        THREE.SceneUtils.attach(mycube, scene, side1);
+                    }
+                    if (mycube.position.z == 0) {
+                        THREE.SceneUtils.attach(mycube, scene, side2);
+                    }
+                    if (mycube.position.z == 3) {
+                        THREE.SceneUtils.attach(mycube, scene, side3);
+                    }
+                } else {
+
+
+                    if (mycube.position.y == -3) {
+                        THREE.SceneUtils.attach(mycube, scene, side1);
+
+                    }
+                    if (mycube.position.y == 0) {
+                        THREE.SceneUtils.attach(mycube, scene, side2);
+                    }
+                    if (mycube.position.y == 3) {
+                        THREE.SceneUtils.attach(mycube, scene, side3);
+                    }
+                }
+            }
+            
+            THREE.SceneUtils.attach(side1, scene, totalCube);
+            THREE.SceneUtils.attach(side2, scene, totalCube);
+            THREE.SceneUtils.attach(side3, scene, totalCube);
+         
+
+            controls.changeOrientation = false;
+
+        });
+
             //mousedown function
         function onDocumentMouseDown(event) {
 
             if (controls.changeOrientation) {
-                //THREE.SceneUtils.detach(side1, scene, totalCube);
-               // THREE.SceneUtils.detach(side2, scene, totalCube);
-                // THREE.SceneUtils.detach(side3, scene, totalCube);
-
-                alert('changin');
-                
-                var cubes = [];
-
-                for (var i = 0; i < side1.children.length; i++) {
-                    cubes.push(side1.children[i]);
-                    THREE.SceneUtils.detach(side1.children[i], side1, scene);
-                }
-
-
-                for (var i = 0; i < side2.children.length; i++) {
-                    cubes.push(side2.children[i]);
-                    THREE.SceneUtils.detach(side2.children[i], side2, scene);
-                }
-
-                for (var i = 0; i < side3.children.length; i++) {
-                    cubes.push(side3.children[i]);
-                    THREE.SceneUtils.detach(side3.children[i], side3, scene);
-                }
-
-                for (var i = 0; i < cubes.length; i++) {
-                    var mycube = cubes[i];
-
-                    if (controls.vertical) {
-                        if (mycube.position.z == -3) {
-                            THREE.SceneUtils.attach(mycube, scene, side1);
-                        }
-                        if (mycube.position.z == 0) {
-                            THREE.SceneUtils.attach(mycube, scene, side2);
-                        }
-                        if (mycube.position.z == 3) {
-                            THREE.SceneUtils.attach(mycube, scene, side3);
-                        }
-                    } else {
-
-
-                        if (mycube.position.x == -3) {
-                            THREE.SceneUtils.attach(mycube, scene, side1);
-                        }
-                        if (mycube.position.x == 0) {
-                            THREE.SceneUtils.attach(mycube, scene, side2);
-                        }
-                        if (mycube.position.x == 3) {
-                            THREE.SceneUtils.attach(mycube, scene, side3);
-                        }
-                    }
-                }
-
-               
-
-                controls.changeOrientation = false;
-                return;
+                return;       
             }
            // console.log('click');
             //create a vector from where the person clicked
@@ -267,9 +292,9 @@
         
 
         // position and point the camera to the center of the scene
-        camera.position.x = -20;
-        camera.position.y = 30;
-        camera.position.z = 40;
+        camera.position.x = 5;
+        camera.position.y = 10;
+        camera.position.z = -22;
         camera.lookAt(new THREE.Vector3(00, 0, 0));
 
         var orbitControls = new THREE.OrbitControls(camera);
@@ -313,8 +338,6 @@
                     var yp = y * 3 - 3;
                     var zp = z * 3 - 3;
                     cube.position.set(xp, yp, zp)
-                    cube.name = "cube"
-                    totalCube.add(cube);
                     if (z === 0) {
                         side1.add(cube);
                     }
@@ -324,8 +347,6 @@
                     if (z === 2) {
                        side3.add(cube);
                     }
-                
-
                     
                 }
             }
@@ -348,7 +369,7 @@
                 if (controls.vertical) {
                     side1.rotation.z += Math.PI / 180;
                 } else {
-                    side1.rotation.x += Math.PI / 180;
+                    side1.rotation.y += Math.PI / 180;
                 }
                 counter1++;
                 if (counter1 >= 90) {
@@ -360,7 +381,7 @@
                 if (controls.vertical) {
                     side1.rotation.z -= Math.PI / 180;
                 } else {
-                    side1.rotation.x -= Math.PI / 180;
+                    side1.rotation.y -= Math.PI / 180;
                 }
                 counter1++;
    
@@ -375,7 +396,7 @@
                 if (controls.vertical) {
                     side2.rotation.z += Math.PI / 180;
                 } else {
-                    side2.rotation.x += Math.PI / 180;
+                    side2.rotation.y += Math.PI / 180;
                 }
                 counter2++;
                 if (counter2 >= 90) {
@@ -387,7 +408,7 @@
                 if (controls.vertical) {
                     side2.rotation.z -= Math.PI / 180;
                 } else {
-                    side2.rotation.x -= Math.PI / 180;
+                    side2.rotation.y -= Math.PI / 180;
                 }
                 counter2++;
 
@@ -402,7 +423,7 @@
                 if (controls.vertical) {
                     side3.rotation.z += Math.PI / 180;
                 } else {
-                    side3.rotation.x += Math.PI / 180;
+                    side3.rotation.y += Math.PI / 180;
                 }
                 counter3++;
                 if (counter3 >= 90) {
@@ -414,7 +435,7 @@
                 if (controls.vertical) {
                     side1.rotation.z -= Math.PI / 180;
                 } else {
-                    side1.rotation.x -= Math.PI / 180;
+                    side1.rotation.y -= Math.PI / 180;
                 }
                 counter3++;
 
