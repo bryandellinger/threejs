@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="../scripts/three.min.js"></script>
+</head>
+<body>
+
+    <script>
+
+        // GLOBALS ====================================================================
+
+        var scene, renderer, camera, clock, player;
+
+        var HORIZONTAL_UNIT = 100,
+                    VERTICAL_UNIT = 100,
+                INV_MAX_FPS = 1 / 100,
+                FIRING_DELAY = 1000,
+                BOT_MAX_AXIAL_ERROR = 10,
+                BOT_MOVE_DELAY = 2000;
+        var frameDelta = 0,
+                paused = true;
+        var spawnPoints = [];
+        var floor;
+        var bullets = [],
+                deadBulletPool = [];
+        var enemies = [],
+                numEnemies = 5;
+        // MAPS =======================================================================
+
+    var map = "   XXXXXXXX     XXXXXXXX      \n" +
+    "   X      X     X      X      \n" +
+    "   X  S   X     X   S  X      \n" +
+    "   X      XXXXXXX      X      \n" +
+    "   X                  XXXXXXXX\n" +
+    "   X         S               X\n" +
+    "   XXXX XX       XXXX    S   X\n" +
+    "      X XX       X  X        X\n" +
+    "   XXXX XXX     XX  X        X\n" +
+    "   X      XX   XXXXXXTTXX  XXX\n" +
+    "   X      XTTTTTXXXTTTTXX  X  \n" +
+    "   XX  S  XTTTTTXXTTTTTXX  XXX\n" +
+    "XXXXX     XTTTTTXTTTTTTX     X\n" +
+    "X      XTTXTTTTTTTTTTTTX     X\n" +
+    "X  S  XXTTTTTTTTXTTTTTXX  S  X\n" +
+    "X     XTTTTTTTTTXTTTTTX      X\n" +
+    "X     TTTTTTTTTTXXXXTTX  XXXXX\n" +
+    "X     XTTTTTTTTTX X      X    \n" +
+    "XX  XXXTTTTTTTTTX X      X    \n" +
+    " X  X XTTTTTTTTTX X      X    \n" +
+    " X  XXX         X X      X    \n" +
+    " X             XXXX      XX   \n" +
+    " XXXXX    T               X   \n" +
+    "     X                 S  X   \n" +
+    "     XX   S  XXXXXXXX     X   \n" +
+    "      XX    XX      XXXXXXX   \n" +
+    "       XXXXXX                 ";
+
+    map = map.split("\n");
+    var ZSIZE = map.length * HORIZONTAL_UNIT,
+    XSIZE = map[0].length * HORIZONTAL_UNIT;
+    var meshMap = new Array(map.length);
+
+
+    // SETUP ======================================================================
+
+    function setup() {
+        setupThreeJS();
+        setupWorld();
+        requestAnimationFrame(animate);
+    }
+    function setupThreeJS() {
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0xdcf7e7, 0.001);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
+        clock = new THREE.Clock(false);
+    }
+    function setupWorld() {
+        setupMap();
+        var light = new THREE.DirectionalLight(0xfffaf3, 1.5);
+        light.position.set(1, 1, 1);
+        scene.add(light);
+        light = new THREE.DirectionalLight(0xf3faff, 0.75);
+        light.position.set(-1, -0.5, -1);
+        scene.add(light);
+    }
+
+    function setupMap() {
+       
+
+        for (var i = 0, rows = map.length; i < rows; i++) {
+            for (var j = 0, cols = map[i].length; j < cols; j++) {
+                if (typeof meshMap[i] === 'undefined') {
+                    meshMap[i] = new Array(cols);
+                }
+                meshMap[i][j] = addVoxel(map[i].charAt(j), i, j);
+            }
+        }
+
+        var material = new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
+        var floorGeo = new THREE.PlaneGeometry(XSIZE, ZSIZE, 20, 20);
+        floor = new THREE.Mesh(floorGeo, material);
+        floor.rotation.x = Math.PI * -0.5;
+        floor.position.set(HORIZONTAL_UNIT, 0, -HORIZONTAL_UNIT); // Ideally this wouldn't be needed
+        scene.add(floor);
+    }
+
+    var addVoxel = (function () {
+        var XOFFSET = map.length * 0.5 * HORIZONTAL_UNIT,
+                ZOFFSET = map[0].length * 0.5 * HORIZONTAL_UNIT,
+                materials = [];
+        for (var i = 0; i < 8; i++) {
+            materials.push(new THREE.MeshPhongMaterial({
+                color: new THREE.Color().setHSL(Math.random() * 0.2 + 0.3, 0.5, Math.random() * 0.25 + 0.75)
+            }));
+        }
+        function material() {
+            return materials[Math.floor(Math.random() * materials.length)].clone();
+        }
+
+        var WALL = new THREE.CubeGeometry(HORIZONTAL_UNIT, VERTICAL_UNIT, HORIZONTAL_UNIT);
+
+        return function (type, row, col) {
+            var z = (row + 1) * HORIZONTAL_UNIT - ZOFFSET,
+                    x = (col + 1) * HORIZONTAL_UNIT - XOFFSET,
+                    mesh;
+            switch (type) {
+                case ' ': break;
+                case 'S':
+                    spawnPoints.push(new THREE.Vector3(x, 0, z));
+                    break;
+                case 'T':
+                    mesh = new THREE.Mesh(WALL.clone(), material());
+                    mesh.position.set(x, VERTICAL_UNIT * 0.5, z);
+                    break;
+                case 'X':
+                    mesh = new THREE.Mesh(WALL.clone(), material());
+                    mesh.scale.y = 3;
+                    mesh.position.set(x, VERTICAL_UNIT * 1.5, z);
+                    break;
+            }
+            if (typeof mesh !== 'undefined') {
+                scene.add(mesh);
+            }
+            return mesh;
+        };
+    })();
+
+    function animate() {
+        draw();
+
+        frameDelta += clock.getDelta();
+        while (frameDelta >= INV_MAX_FPS) {
+            update(INV_MAX_FPS);
+            frameDelta -= INV_MAX_FPS;
+        }
+
+        if (!paused) {
+            requestAnimationFrame(animate);
+        }
+    }
+    function draw() {
+        renderer.render(scene, camera);
+    }
+
+    setup();
+
+    </script>
+</body>
+</html>

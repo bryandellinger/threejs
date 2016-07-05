@@ -1,0 +1,2247 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fob Origin Web Service Tester</title>
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .dont-break-out {
+            /* These are technically the same, but use both */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            -ms-word-break: break-all;
+            /* This is the dangerous one in WebKit, as it breaks things wherever */
+            word-break: break-all;
+            /* Instead use this non-standard one: */
+            word-break: break-word;
+            /* Adds a hyphen where the word breaks, if supported (No Blink) */
+            -ms-hyphens: auto;
+            -moz-hyphens: auto;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
+
+        .spinner {
+            height: 60px;
+            width: 60px;
+            margin: 0 auto;
+            position: relative;
+            -webkit-animation: rotation .6s infinite linear;
+            -moz-animation: rotation .6s infinite linear;
+            -o-animation: rotation .6s infinite linear;
+            animation: rotation .6s infinite linear;
+            border: 6px solid rgba(0,174,239,.15);
+            border-radius: 100%;
+        }
+
+            .spinner:before {
+                content: "";
+                display: block;
+                position: absolute;
+                left: -6px;
+                top: -6px;
+                height: 100%;
+                width: 100%;
+                border-top: 6px solid rgba(0,174,239,.8);
+                border-left: 6px solid transparent;
+                border-bottom: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-radius: 100%;
+            }
+
+        @-webkit-keyframes rotation {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(359deg);
+            }
+        }
+
+        @-moz-keyframes rotation {
+            from {
+                -moz-transform: rotate(0deg);
+            }
+
+            to {
+                -moz-transform: rotate(359deg);
+            }
+        }
+
+        @-o-keyframes rotation {
+            from {
+                -o-transform: rotate(0deg);
+            }
+
+            to {
+                -o-transform: rotate(359deg);
+            }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+        div.wrapper {
+            overflow: auto;
+        }
+
+        .modal-body {
+            max-height: calc(100vh - 210px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Fob Origin Web Service Tester</h1>
+            <p>Use the form below to test the Origin Web Service Api</p>
+        </div>
+    </div>
+
+
+    <div class="container" data-bind="visible: !loggedon()">
+        <!--begin container-->
+        <div class="row">
+            <!--begin logon row-->
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">User Name</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="username" placeholder="VSM User Name" data-bind="value: userName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Password</label>
+                    <div class="col-sm-6">
+                        <input type="password" class="form-control" id="password" placeholder="VSM Password" data-bind="value: password">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <button type="button" class="btn btn-primary btn-lg" data-bind="click: logon" disabled id="signin">Sign in</button>
+                    </div>
+                </div>
+            </form>
+            <div class="alert alert-danger" role="alert" id="logonError" style="display: none;">
+                <p><strong>Unable to Logon: </strong> The Web Api reported the following error <span data-bind="text: logOnErrorMessage"></span></p>
+                <p>Please check the following</p>
+                <p> You have a valid VSM User ID. </p>
+                <p> Your user is a level 1 or 2 vendor. </p>
+                <p> Your vendor dodaac is Web Service Enabled. </p>
+            </div>
+            <div id="logonSpinner">
+                <div class="spinner"></div>
+            </div>
+
+        </div><!-- end row-->
+    </div><!--end container-->
+
+
+
+
+
+    <div class="container" data-bind="visible: loggedon" id="mainpage" style="display: none;">
+        <!--begin container-->
+
+
+
+        <div id="tabs">
+
+            <ul>
+
+                <li><a href="#tabs-1">Shipment Request</a></li>
+
+                <li><a href="#tabs-2">Status Request</a></li>
+
+                <li><a href="#tabs-3">Documents Request</a></li>
+
+                <li><a href="#tabs-4">129P Label Request</a></li>
+
+            </ul>
+
+            <div id="tabs-1">
+
+                <div class="row">
+                    <!--begin row one -->
+
+                    <div class="panel panel-info">
+                        <!--begin panel-->
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Purchase Orders</h3>
+                        </div>
+                        <div class="panel-body">
+                            <!--begin panel body -->
+
+
+                            <div class="wrapper">
+                                <!--begin wrapper-->
+                                <table class="table table-hover table-striped table-condensed table-responsive dontshowwhenloading" style="display: none;" id="mytable">
+                                    <thead>
+                                        <tr>
+                                            <th>Requisiton Number</th>
+                                            <th>Purchase Order</th>
+                                            <th>Release</th>
+                                            <th>CLIN</th>
+                                            <th>Quantity</th>
+                                            <th>Weight</th>
+                                            <th>Length</th>
+                                            <th>Width</th>
+                                            <th>Height</th>
+                                            <th>Pieces Per Pallet</th>
+                                            <th>Type Pack per Pallet</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="if:PurchaseOrders().length < 1">
+                                        <tr>
+                                            <td colspan="12">
+                                                <div class=" alert alert-danger" role="alert">
+                                                    <strong>You Have No Purchase Orders</strong> <span>Click the Add Purchase Order Number button to add a Purchase Order Record</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody data-bind="foreach: PurchaseOrders">
+                                        <tr>
+                                            <td> <input type="text" class="form-control" style="min-width:180px;" data-bind="value: RequisitonNumber" /></td>
+                                            <td><input type="text" class="form-control" style="min-width:160px;" data-bind="value: PurchaseOrder" /></td>
+                                            <td><input type="text" class="form-control" style="min-width:100px;" data-bind="value: Release" /></td>
+                                            <td><input type="text" class="form-control" style="min-width:100px;" data-bind="value: CLIN" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:100px;" data-bind="value: Quantity" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:100px;" data-bind="value: Weight" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:50px;" data-bind="value: Length" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:50px;" data-bind="value: Width" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:50px;" data-bind="value: Height" /></td>
+                                            <td><input type="number" class="form-control" style="min-width:50px;" data-bind="value: PcsPerPallet" /></td>
+                                            <td><input type="text" class="form-control" style="min-width:50px;" data-bind="value:TypePackPerPallet" /></td>
+                                            <td><button class="btn btn-danger" data-bind="click:$root.removeRecord">X</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div><!--end wrapper-->
+                        </div><!--end panel body-->
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                                Add Purchase Order
+                            </button>
+                        </div>
+
+                    </div><!--end panel-->
+
+                </div><!--end row one-->
+
+
+
+
+                <div class="row">
+                    <!--begin row two-->
+                    <div class="panel panel-info">
+                        <!-- begin panel two-->
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Other Form Info</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+
+                                <div class="form-group">
+                                    <label for="ProcessingTypeInd" class="col-sm-3 control-label">ProcessingTypeInd</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="ProcessingTypeInd" placeholder="processing type indicator" data-bind="value: ProcessingTypeInd">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ProcessingTypeInd"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 1   <p></p> <strong>Notes:</strong>
+                                            <p>P = Partial</p>
+                                            <p>T = Total</p>
+                                            <p>V = Variation Allowance</p>
+                                            <p>M = Mulit Freight Piece</p>
+                                            <p>A = All Packed in One</p>"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="TypePackInd" class="col-sm-3  control-label">TypePackInd</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="TypePackInd" placeholder="Type Pack Indicator" data-bind="value: TypePackInd">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Type Pack Indicator"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> String <p></p> <strong>Length:</strong>2<p></p>
+                                            <strong>Notes:</strong> Acceptable Types. <p>BD (Bundle)</p> <p>CO (Coil)</p><p>CR (Crate)</p><p>CY (Cylinder)</p>
+                                            <p>LS (Loose)</p><p>PC (Piece)</p><p>RO (Roll)</p><p>SH (Sheet)</p><p>VE (Vehicle)</p><p>BX (Box)</p>
+                                            <p>CN (Can)</p><p>CT (Carton)</p><p>DR (Drum)</p><p>MW (Multiwall)</p><p>RL (Reel)</p><p>SD (Skid)</p>
+                                            <p>TU (Tube)</p><p>PU Palletized Unit</p>">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="TypeEquipmentInd" class="col-sm-3 control-label">TypeEquipmentInd</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="TypeEquipmentInd" placeholder="Type Equipment Indicator" data-bind="value: TypeEquipmentInd">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="TypeEquipmentInd"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 3 <p></p><strong>Notes:</strong>
+                                            Acceptable Values May Include: AE2 (Low Boy Dbl Drop, 2 axl), QA1 (Non Mil Container, < 21 ft), QA5(Non Mil Container, 40 ft), AV3(Van Closed, > 40 ft), AV1(Van, closed, 30 ft and less), AF3(Flat Bed, over 40 ft), AV2(Van,closed, 31-40 ft), QA2(Non-Mil Container, 24 ft), QA3(Non-Mil Container, 27 ft), QA4(Non-Mil Container, 35 ft), QA6(Non-Mil container 45 ft)"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="PickupDate" class="col-sm-3 control-label">PickupDate</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="PickupDate" placeholder="dd/mm/yyyy" data-bind="value: PickupDate">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="PickupDate"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Date <p></p> <strong>Format:</strong> dd/mm/yyyy <p></p>"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="VendorReferenceNumber" class="col-sm-3 control-label">VendorReferenceNumber</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="VendorReferenceNumber" placeholder="Vendor Reference Number" data-bind="value: VendorReferenceNumber">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="VendorReferenceNumber"
+                                           data-content="
+                                            <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 30"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="CarrierRemarksLine1" class="col-sm-3 control-label">CarrierRemarksLine1</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="CarrierRemarksLine1" placeholder="Carrier Remarks Line 1" data-bind="value: CarrierRemarksLine1">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CarrierRemarksLine1"
+                                           data-content="
+                                            <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 79 <p></p>"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="CarrierRemarksLine2" class="col-sm-3 control-label">CarrierRemarksLine2</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="CarrierRemarksLine2" placeholder="Carrier Remarks Line 2" data-bind="value: CarrierRemarksLine2">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CarrierRemarksLine2"
+                                           data-content="
+                                            <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 79 <p></p>"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="PickupDate" class="col-sm-3 control-label">VarianceProcessingInd</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="PickupDate" placeholder="Variance Processing Indicator" data-bind="value: VarianceProcessingInd">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="VarianceProcessingInd"
+                                           data-content="
+                                            <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 1 <p></p> <strong>Notes:</strong>
+                                            Acceptable Values: O (Over), U (Under), B (Both)"
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="VariationPercent" class="col-sm-3 control-label">VariationPercent</label>
+                                    <div class="col-sm-5">
+                                        <input type="number" class="form-control" id="VariationPercent" placeholder="Variance Percent" data-bind="value: VariationPercent">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="VariationPercent"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1 - 100 <p></p> <strong>Notes:</strong>
+                                            If Variance Processing Ind is supplied than this field is required. Acceptable values are 0 to 100 representing a percentage.""
+                                            >
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+
+                            </form>
+                            <div id="postSpinner" style="display:none;">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button type="button" class="btn btn-primary btn-lg" data-bind="click: submit">Post as JSON</button>
+                            <button type="button" class="btn btn-primary btn-lg" data-bind="click: submitAsXML">Post as XML</button>
+                        </div>
+                    </div><!--end panel two-->
+                </div><!--end row tow-->
+
+                <div class="row">
+                    <!--begin row three-->
+                    <div class="col-sm-offset-2 col-sm-6 alertbox" data-bind="if: hasError" style="display:none;">
+                        <div class="alert alert-danger dont-break-out" role="alert">
+                            <strong><span data-bind="text: ErrorHeader" class="text-center"></span></strong>
+                            <div data-bind="foreach: errors">
+                                <div>
+                                    <p data-bind="foreach: errors">
+                                        <strong>Error: </strong><span data-bind="text: $data"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div><!--end alert-->
+                    </div><!-- end validation errors-->
+
+                </div><!-- end row three-->
+
+                <div class="row">
+                    <!-- begin row four-->
+                    <div class="col-sm-offset-2 col-sm-6 alertbox" data-bind="if: hasSuccess" style="display:none;">
+                        <div class=" alert alert-success" role="alert">
+                            <strong><span class="text-center" data-bind="text: successMessage"></span></strong>
+                        </div>
+                    </div><!-- end validation errors-->
+
+                </div><!-- end row four-->
+
+                <div class="row">
+                    <!-- begin row five-->
+                    <div>
+                        <!--begin tab container-->
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">JSON Request</a></li>
+                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">XML Request</a></li>
+                            <li role="presentation"><a href="#profile2" aria-controls="profile2" role="tab" data-toggle="tab">JSON Response</a></li>
+                            <li role="presentation"><a href="#profile3" aria-controls="profile3" role="tab" data-toggle="tab">XML Response</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="home">
+                                <div class="dont-break-out"><span data-bind="text: jsonData"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile">
+                                <div class="dont-break-out"><span data-bind="text: xmlData"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile2">
+                                <div class="dont-break-out"><span data-bind="text: jsonResponse"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile3">
+                                <div class="dont-break-out"><span data-bind="text: xmlResponse"></span></div>
+                            </div>
+                        </div>
+
+                    </div><!-- end tab container-->
+
+
+                </div><!--end row five-->
+
+            </div>
+
+            <div id="tabs-2">
+
+                <div class="form-horizontal">
+
+                    <div class="form-group">
+                        <label for="scn" class="col-sm-3 control-label">SCN</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="scn" placeholder="shipment control number" data-bind="value: scn, valueUpdate:'afterkeydown'">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ProcessingTypeInd"
+                               data-content="
+                                <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 8   <p>
+                                    "
+                                    >
+                                    ?
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <button type="button" class="btn btn-primary" data-bind="click: getStatusJson, enable: scn()">Get Status as JSON</button>
+                            <button type="button" class="btn btn-primary" data-bind="click: getStatusXML, enable: scn()">Get Status as XML</button>
+                            <a class="btn btn-primary disabled" data-bind="attr:{href: url}, css: { disabled: !scn() }" target="_blank"><span style="color:white;">Get Status as Web Page</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="getStatusSpinner" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+
+                <div class="row">
+                    <!-- begin row -->
+                    <div>
+                        <!--begin tab container-->
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#homestatus" aria-controls="homestatus" role="tab" data-toggle="tab">JSON Response</a></li>
+                            <li role="presentation"><a href="#profilestatus" aria-controls="profilestatus" role="tab" data-toggle="tab">XML Response</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="homestatus">
+                                <div class="dont-break-out"><span data-bind="text: jsonStatusResponse"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profilestatus">
+                                <div class="dont-break-out"><span data-bind="text: xmlStatusResponse"></span></div>
+                            </div>
+                        </div>
+
+                    </div><!-- end tab container-->
+
+
+                </div><!--end row -->
+
+
+            </div>
+
+            <div id="tabs-3">
+                <!--begin print documents-->
+                <div class="form-horizontal">
+
+                    <div class="form-group">
+                        <label for="scn" class="col-sm-4 control-label">SCN</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="scn" placeholder="shipment control number" data-bind="value: scn, valueUpdate:'afterkeydown'">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ProcessingTypeInd"
+                               data-content="
+                                <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 8   <p>
+                                    "
+                                    >
+                                    ?
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="generateAllDocs" class="col-sm-4 control-label">Generate All Documents</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getAllDocs, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+                    <div id="getAllDocsSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="AllDocsErrorAlert" style="display: none;">
+                        <p><strong>Error Creating All Documents: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: AllDocsError"></span></p>
+                    </div>
+
+
+
+
+                    <div class="form-group">
+                        <label for="generateBOL" class="col-sm-4 control-label">Generate BOL</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getBOL, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+                    <div id="getDocSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="docErrorAlert" style="display: none;">
+                        <p><strong>Error Creating Bill of Lading: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: docError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generatePackingList" class="col-sm-4 control-label">Generate Packing List</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getPackingList, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getPackingListSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="packingListErrorAlert" style="display: none;">
+                        <p><strong>Error Creating Packing List: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: packingListError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generateMSL" class="col-sm-4 control-label">Generate MSL</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getMSL, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getMSLSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="MSLErrorAlert" style="display: none;">
+                        <p><strong>Error Creating MSL: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: MSLError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generateContainerIdLabel" class="col-sm-4 control-label">Generate Container Id Label</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getContainerIdLabel, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getContainerIdLabelSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="ContainerIdLabelErrorAlert" style="display: none;">
+                        <p><strong>Error Creating Container Id Label: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: ContainerIdLabelError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generateSmallParcelLabel" class="col-sm-4 control-label">Generate Small Parcel Label</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getSmallParcelLabel, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getSmallParcelLabelSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="SmallParcelLabelErrorAlert" style="display: none;">
+                        <p><strong>Error Creating Small Parcel Label: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: SmallParcelLabelError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generateCommercialInvoice" class="col-sm-4 control-label">Generate Commercial Invoice</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getCommercialInvoice, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getCommercialInvoiceSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="CommercialInvoiceErrorAlert" style="display: none;">
+                        <p><strong>Error Creating Commercial Invoice: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: CommercialInvoiceError"></span></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="generateNineteenSeven" class="col-sm-4 control-label">Generate 1907</label>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" data-bind="click: getNineteenSeven, enable: scn()"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+
+                    <div id="getNineteenSevenSpinner" style="display:none;">
+                        <div class="spinner"></div>
+                    </div>
+
+
+                    <div class="alert alert-danger" role="alert" id="NineteenSevenErrorAlert" style="display: none;">
+                        <p><strong>Error Creating 1907: </strong> The Web Api reported the following error </p>
+                        <p><span data-bind="text: NineteenSevenError"></span></p>
+                    </div>
+
+
+
+                </div>
+
+
+
+
+            </div><!--end print documents-->
+
+            <div id="tabs-4">
+                <!--begin 129p tab-->
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="RequisitonNumber" class="col-sm-2 col-sm-offset-1 control-label">RequisitonNumber</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="RequisitonNumber" placeholder="requisiton number" data-bind="value: RequisitonNumber">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="RequisitonNumber"
+                               data-content="
+                                <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 15   <p></p> <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="PurchaseOrder" class="col-sm-2 col-sm-offset-1 control-label">Purchase Order</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="PurchaseOrder" placeholder="Purchase Order" data-bind="value: PurchaseOrder">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="PurchaseOrder"
+                               data-content="
+                                <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 13   <p></p>
+                                <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                ?
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Release" class="col-sm-2 col-sm-offset-1 control-label">Release</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Release" placeholder="Release" data-bind="value: Release">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Release"
+                               data-content="
+                                <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 6   <p></p>
+                                <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                ?
+                            </a>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="CLIN" class="col-sm-2 col-sm-offset-1 control-label">CLIN</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="CLIN" placeholder="CLIN" data-bind="value: CLIN">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CLIN"
+                               data-content="
+                                <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 6   <p></p>
+                                <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Quantity" class="col-sm-2 col-sm-offset-1 control-label">Quantity</label>
+                        <div class="col-sm-5">
+                            <input type="number" class="form-control" id="Quantity" placeholder="0" data-bind="value: Quantity">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Quantity"
+                               data-content="
+                                <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> Greater than 0  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="PartNumber" class="col-sm-2 col-sm-offset-1 control-label">P/N</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="PartNumber" placeholder="Part Number" data-bind="value: PartNumber">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="PartNumber"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 15<p></p>
+                                <strong>Notes:</strong> ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="UIDetail" class="col-sm-2 col-sm-offset-1 control-label">Unit Of Issue Detail</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="UIDetail" placeholder="Unit Of Issue Detail" data-bind="value: UIDetail">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="UIDetail"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 8   <p></p>
+                                <strong>Notes:</strong> Provides further explanation of Unit of Issue. For example BX = 100EA ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Lot" class="col-sm-2 col-sm-offset-1 control-label">Lot</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Lot" placeholder="Lot" data-bind="value: Lot">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Lot"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 10  <p></p>
+
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Preservation" class="col-sm-2 col-sm-offset-1 control-label">Preservation Method</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Preservation" placeholder="Preservation Method" data-bind="value: Preservation">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Preservation"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 10  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DatePreserved" class="col-sm-2 col-sm-offset-1 control-label">Date Preserved</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="DatePreserved" placeholder="Date Preserved" data-bind="value: DatePreserved">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="DatePreserved"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                <strong>Notes:</strong> Represents the date the items were preserved in packaging ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ShelfType" class="col-sm-2 col-sm-offset-1 control-label">Shelf Type</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="ShelfType" placeholder="Shelf Type" data-bind="value: ShelfType">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ShelfType"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 4  <p></p>
+                                <strong>Acceptable Values:</strong>
+                                <p><strong>MFD1</strong> Shelf Life Type 1 Manufactured Date</p>
+                                <p><strong>ASM1</strong> Shelf Life Type 1 Assembled Date</p>
+                                <p><strong>PAK1</strong> Shelf Life Type 1 Packed Date</p>
+                                <p><strong>CUR1</strong> Shelf Life Type 1 Cured Date</p>
+                                <p><strong>MFD2</strong> Shelf Life Type 2 Manufactured Date</p>
+                                <p><strong>ASM2</strong> Shelf Life Type 2 Assembled Date</p>
+                                <p><strong>PAK2</strong> Shelf Life Type 2 Packed Date</p>
+                                <p><strong>CUR2</strong> Shelf Life Type 2 Cured Date</p>
+                                <p><strong>SHL0</strong> Shelf Life</p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ShelfDate1" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 1 Shelf Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="ShelfDate1" placeholder="mm/yy or qtr/yy" data-bind="value: ShelfDate1">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ShelfDate1"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                <p><strong>Date Formats:</strong></p>
+                                <p><strong>Manufactured: </strong> mm/yy</p>
+                                <p><strong>Assembled: </strong> mm/yy</p>
+                                <p><strong>Packed: </strong> mm/yy</p>
+                                <p><strong>Cured: </strong> qtry/yy for example 03Q15 = 3rd Quarter of 2015</p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Exp1" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 1 Exp Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Exp1" placeholder="mm/yy" data-bind="value: Exp1">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Exp1"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CurDt1" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 1 Cured Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="CurDt1" placeholder="qtr/yy" data-bind="value: CurDt1">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CurDt1"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CureInsp1" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 1 Insp/Test Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="CureInsp1" placeholder="qtr/yy" data-bind="value: CureInsp1">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CureInsp1"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ShelfDate2" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 2 Shelf Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="ShelfDate2" placeholder="mm/yy or qtr/yy" data-bind="value: ShelfDate2">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="ShelfDate2"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                <p><strong>Date Formats:</strong></p>
+                                <p><strong>Manufactured: </strong> mm/yy</p>
+                                <p><strong>Assembled: </strong> mm/yy</p>
+                                <p><strong>Packed: </strong> mm/yy</p>
+                                <p><strong>Cured: </strong> qtry/yy for example 03Q15 = 3rd Quarter of 2015</p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Exp2" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 2 Insp/Test Date </label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Exp2" placeholder="mm/yy" data-bind="value: Exp2">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Exp2"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CurDt2" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 2 Cured Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="CurDt2" placeholder="qtr/yy" data-bind="value: CurDt2">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CurDt2"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CureInsp2" class="col-sm-2 col-sm-offset-1 control-label">Shelf Life Type 2 Insp/Test Date</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="CureInsp2" placeholder="qtr/yy" data-bind="value: CureInsp2">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CureInsp2"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 5  <p></p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="UnitPerInt" class="col-sm-2 col-sm-offset-1 control-label">Units in Intermediate Pack</label>
+                        <div class="col-sm-5">
+                            <input type="number" class="form-control" id="UnitPerInt" placeholder="1" data-bind="value: UnitPerInt">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="UnitPerInt"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> if left blank or 0 defaults to 1  <p></p>
+                                <p><strong>Notes:</strong></p><p>
+                                    Represents the number of units nested within the intermediate pack container. Default '1' Number entered determines how many
+                                    Intermediate pack labels to be created. Value '1' indicates no intermediate pack and only unit labels will be produced.
+                                </p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DesiredLabelSize" class="col-sm-2 col-sm-offset-1 control-label">Desired Label Size</label>
+                        <div class="col-sm-5">
+                            <input type="number" class="form-control" id="DesiredLabelSize" placeholder="1 or 2 or 3" data-bind="value: DesiredLabelSize">
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="DesiredLabelSize"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Acceptable Values:</strong> <p></p>
+                                <p><strong>Blank or 1</strong><p>1-1/3''X4'' Label Size</p>
+                                <p><strong>2</strong><p>2''X4''Label Size</p>
+                                <p><strong>3</strong><p>3-1/2''X5''Label Size</p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="SerialNumbers" class="col-sm-2 col-sm-offset-1 control-label">Serial Numbers</label>
+                        <div class="col-sm-5">
+                            <textarea class="form-control" rows="5" id="SerialNumbers" placeholder="serial1, serial2, serial3" data-bind="value: SerialNumbers"></textarea>
+                        </div>
+                        <div class="col-sm-4">
+                            <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="SerialNumbers"
+                               data-content="
+                                <strong>Required:</strong> No <p></p> <strong>Data Type:</strong> String <p></p> <strong>Notes:</strong> a comma delimited list of serial numbers. <p></p>
+                                <p>If item is serialized, each unit label will have one unique serial number. The Quantity field (above) determines how many serial numbers should be provided by the client.</p>
+                                <p>Each Intermediate Pack Label will display up to 5 serial numbers on each intermediate pack label.</p>
+                                ">
+                                ?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button class="btn btn-primary btn-lg" data-bind="click: submit129Json">Post As Json</button>
+                            <button class="btn btn-primary btn-lg" data-bind="click: submit129Xml">Post As XML</button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <div id="Spinner129" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+
+                <div class="row">
+                    <!--begin row three-->
+                    <div class="col-sm-offset-2 col-sm-6 alertbox" data-bind="if: hasError129" style="display:none;">
+                        <div class="alert alert-danger dont-break-out" role="alert">
+                            <strong><span data-bind="text: ErrorHeader129" class="text-center"></span></strong>
+                            <div data-bind="foreach: errors129">
+                                <div>
+                                    <p data-bind="foreach: errors">
+                                        <strong>Error: </strong><span data-bind="text: $data"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div><!--end alert-->
+                    </div><!-- end validation errors-->
+
+                </div><!-- end row three-->
+
+                <div class="row">
+                    <!-- begin row four-->
+                    <div class="col-sm-offset-2 col-sm-6 alertbox" data-bind="if: hasSuccess129" style="display:none;">
+                        <div class=" alert alert-success" role="alert">
+                            <strong><span class="text-center" data-bind="text: successMessage129"></span></strong>
+                        </div>
+                    </div><!-- end validation errors-->
+                </div>
+
+
+
+
+
+
+
+                <div class="row">
+                    <!-- begin row five-->
+                    <div>
+                        <!--begin tab container-->
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home129" aria-controls="home" role="tab" data-toggle="tab">JSON Request</a></li>
+                            <li role="presentation"><a href="#profile129" aria-controls="profile129" role="tab" data-toggle="tab">XML Request</a></li>
+                            <li role="presentation"><a href="#profile2129" aria-controls="profile2129" role="tab" data-toggle="tab">JSON Response</a></li>
+                            <li role="presentation"><a href="#profile3129" aria-controls="profile3129" role="tab" data-toggle="tab">XML Response</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="home129">
+                                <div class="dont-break-out"><span data-bind="text: jsonData129"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile129">
+                                <div class="dont-break-out"><span data-bind="text: xmlData129"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile2129">
+                                <div class="dont-break-out"><span data-bind="text: jsonResponse129"></span></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="profile3129">
+                                <div class="dont-break-out"><span data-bind="text: xmlResponse129"></span></div>
+                            </div>
+                        </div>
+
+                    </div><!-- end tab container-->
+
+
+                </div><!--end row five-->
+
+
+            </div><!--end 129p tab-->
+
+        </div>
+
+
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Add a Purchase Order</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="RequisitonNumber" class="col-sm-2 col-sm-offset-1 control-label">RequisitonNumber</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="RequisitonNumber" placeholder="requisiton number" data-bind="value: RequisitonNumber">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="RequisitonNumber"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 15   <p></p> <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="PurchaseOrder" class="col-sm-2 col-sm-offset-1 control-label">Purchase Order</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="PurchaseOrder" placeholder="Purchase Order" data-bind="value: PurchaseOrder">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="PurchaseOrder"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 13   <p></p>
+                                            <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                            ?
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Release" class="col-sm-2 col-sm-offset-1 control-label">Release</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Release" placeholder="Release" data-bind="value: Release">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Release"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 6   <p></p>
+                                            <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required">
+                                            ?
+                                        </a>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="CLIN" class="col-sm-2 col-sm-offset-1 control-label">CLIN</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="CLIN" placeholder="CLIN" data-bind="value: CLIN">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="CLIN"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Field Length:</strong> 6   <p></p>
+                                            <strong>Notes:</strong> either a Rqn, or the  Po, Release, and CLIN is required ">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="Quantity" class="col-sm-2 col-sm-offset-1 control-label">Quantity</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Quantity" placeholder="Quantity" data-bind="value: Quantity">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Quantity"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1-99999<p></p>
+                                            <strong>Notes:</strong> Must be less than the Quantity Open ">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Weight" class="col-sm-2 col-sm-offset-1 control-label">Weight</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Weight" placeholder="0.00" data-bind="value: Weight">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Weight in pounds"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Double (Decimal) <p></p> <strong>Range:</strong> 0.01-999999999.99<p></p>
+                                            <strong>Notes:</strong> Weight is in pounds, if a Palletized unit the total weight must be greater than 40 pounds (the weight of the pallet) ">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Length" class="col-sm-2 col-sm-offset-1 control-label">Length</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Length" placeholder="length in inches" data-bind="value: Length">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Length in inches"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1-999<p></p>
+                                            <strong>Notes:</strong> Length  in inches.">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Width" class="col-sm-2 col-sm-offset-1 control-label">Width</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Width" placeholder="width in inches" data-bind="value: Width">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Width in inches"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1-999<p></p>
+                                            <strong>Notes:</strong> Width in inches.">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Height" class="col-sm-2 col-sm-offset-1 control-label">Height</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="Height" placeholder="height in inches" data-bind="value: Height">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Height in inches"
+                                           data-content="
+                                            <strong>Required:</strong> Yes <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1-999<p></p>
+                                            <strong>Notes:</strong> Height in inches.">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="PcsPerPallet" class="col-sm-2 col-sm-offset-1 control-label">PcsPerPallet</label>
+                                    <div class="col-sm-5">
+                                        <input type="number" class="form-control" id="PcsPerPallet" placeholder="Pieces Per Pallet" data-bind="value: PcsPerPallet">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Pieces Per Pallet"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> Integer <p></p> <strong>Range:</strong> 1-999<p></p>
+                                            <strong>Notes:</strong> If Palletized Unit is selected pieces per pallet required.">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="TypePackPerPallet" class="col-sm-2 col-sm-offset-1 control-label">TypePackPerPallet</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" id="TypePackPerPallet" placeholder="Type Pack Per Pallet" data-bind="value: TypePackPerPallet">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a tabindex="0" class="btn btn-lg btn-info dismissablePopover" role="button" data-toggle="popover" data-trigger="focus" title="Type Pack Per Pallet"
+                                           data-content="
+                                            <strong>Required:</strong> Conditional <p></p> <strong>Data Type:</strong> String <p></p> <strong>Length:</strong>2<p></p>
+                                            <strong>Notes:</strong> If Palletized Unit is selected then type pack per pallet is required. Acceptable values are BX (Box),
+                                            CN (Can), DR (Drum), PC (Piece), RO(Roll), CL(Coil), CT(Carton), LS(Loose), RL(Reel)">
+                                            ?
+                                        </a>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-bind="click: InsertRecord">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end container-->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
+    <script src="https://cdn.rawgit.com/abdmob/x2js/master/xml2json.js"></script>
+    <script>
+        function po(RequisitonNumber, PurchaseOrder, CLIN, Release, Quantity, Weight, Length, Width, Height, PcsPerPallet, TypePackPerPallet) {
+            var self = this;
+            this.RequisitonNumber = ko.observable(RequisitonNumber);
+            this.PurchaseOrder = ko.observable(PurchaseOrder);
+            this.CLIN = ko.observable(CLIN);
+            this.Release = ko.observable(Release);
+            this.Quantity = ko.observable(Quantity);
+            this.Weight = ko.observable(Weight);
+            this.Length = ko.observable(Length);
+            this.Width = ko.observable(Width);
+            this.Height = ko.observable(Height);
+            this.PcsPerPallet = ko.observable(PcsPerPallet);
+            this.TypePackPerPallet = ko.observable(TypePackPerPallet);
+        }
+
+        function viewModel() {
+            var self = this;
+            this.errors = ko.observableArray("");
+            this.errors129 = ko.observableArray("");
+            this.PurchaseOrders = ko.observableArray("");
+            this.RequisitonNumber = ko.observable("");
+            this.PurchaseOrder = ko.observable("");
+            this.CLIN = ko.observable("");
+            this.Release = ko.observable("");
+            this.Quantity = ko.observable("");
+            this.Weight = ko.observable("");
+            this.Length = ko.observable("");
+            this.Width = ko.observable("");
+            this.Height = ko.observable("");
+            this.TypePackInd = ko.observable("");
+            this.ProcessingTypeInd = ko.observable("");
+            this.PcsPerPallet = ko.observable("");
+            this.TypePackPerPallet = ko.observable("");
+            this.VendorReferenceNumber = ko.observable("");
+            this.TypeEquipmentInd = ko.observable("");
+            this.CarrierRemarksLine1 = ko.observable("");
+            this.CarrierRemarksLine2 = ko.observable("");
+            this.PickupDate = ko.observable("");
+            this.VarianceProcessingInd = ko.observable("");
+            this.VariationPercent = ko.observable("");
+            this.userName = ko.observable("");
+            this.password = ko.observable("");
+            this.loggedon = ko.observable(false);
+            this.hasError = ko.observable(false);
+            this.hasError129 = ko.observable(false);
+            this.ErrorHeader = ko.observable("");
+            this.ErrorHeader129 = ko.observable("")
+            this.hasSuccess = ko.observable(false);
+            this.hasSuccess129 = ko.observable(false);
+            this.showForm = ko.observable(false);
+            this.jsonResponse = ko.observable("");
+            this.jsonResponse129 = ko.observable("");
+            this.jsonStatusResponse = ko.observable("");
+            this.xmlResponse = ko.observable("");
+            this.xmlResponse129 = ko.observable("");
+            this.xmlStatusResponse = ko.observable("");
+            this.successMessage = ko.observable("");
+            this.successMessage129 = ko.observable("");
+            this.logOnErrorMessage = ko.observable("");
+            this.scn = ko.observable("");
+            this.docError = ko.observable("");
+            this.packingListError = ko.observable("");
+            this.MSLError = ko.observable("");
+            this.ContainerIdLabelError = ko.observable("");
+            this.SmallParcelLabelError = ko.observable("");
+            this.CommercialInvoiceError = ko.observable("");
+            this.NineteenSevenError = ko.observable("");
+            this.AllDocsError = ko.observable("");
+            this.UIDetail = ko.observable("");
+            this.PartNumber = ko.observable("");
+            this.Lot = ko.observable("");
+            this.Preservation = ko.observable("");
+            this.DatePreserved = ko.observable("");
+            this.Quantity = ko.observable("");
+            this.ShelfType = ko.observable("");
+            this.ShelfDate1 = ko.observable("");
+            this.ShelfDate2 = ko.observable("");
+            this.Exp1 = ko.observable("");
+            this.Exp2 = ko.observable("");
+            this.CurDt1 = ko.observable("");
+            this.CurDt2 = ko.observable("");
+            this.CureInsp1 = ko.observable("");
+            this.CureInsp2 = ko.observable("");
+            this.UnitPerInt = ko.observable("");
+            this.DesiredLabelSize = ko.observable("");
+            this.SerialNumbers = ko.observable("");
+
+            this.jsonData = ko.computed(function () {
+                var myjson = ko.toJSON({
+                    FobOriginWebServicePos: this.PurchaseOrders,
+                    ProcessingTypeInd: this.ProcessingTypeInd,
+                    VendorReferenceNumber: this.VendorReferenceNumber,
+                    TypeEquipmentInd: this.TypeEquipmentInd,
+                    CarrierRemarksLine1: this.CarrierRemarksLine1,
+                    CarrierRemarksLine2: this.CarrierRemarksLine2,
+                    PickupDate: this.PickupDate,
+                    TypePackInd: this.TypePackInd,
+                    VarianceProcessingInd: this.VarianceProcessingInd,
+                    VariationPercent: this.VariationPercent,
+                });
+                return myjson;
+                var x2js = new X2JS();
+                return x2js.json2xml_str($.parseJSON(myjson));
+            },
+            this);
+
+            this.jsonData129 = ko.computed(function () {
+                var myjson = ko.toJSON({
+                    RequisitonNumber: this.RequisitonNumber,
+                    PurchaseOrder: this.PurchaseOrder,
+                    Release: this.Release,
+                    CLIN: this.CLIN,
+                    UIDetail: this.UIDetail,
+                    PartNumber: this.PartNumber,
+                    Lot: this.Lot,
+                    Preservation: this.Preservation,
+                    DatePreserved: this.DatePreserved,
+                    Quantity: this.Quantity,
+                    ShelfType: this.ShelfType,
+                    ShelfDate1: this.ShelfDate1,
+                    ShelfDate2: this.ShelfDate2,
+                    Exp1: this.Exp1,
+                    Exp2: this.Exp2,
+                    CurDt1: this.CurDt1,
+                    CurDt2: this.CurDt2,
+                    CureInsp1: this.CureInsp1,
+                    CureInsp2: this.CureInsp2,
+                    UnitPerInt: this.UnitPerInt,
+                    DesiredLabelSize: this.DesiredLabelSize,
+                    SerialNumbers: this.SerialNumbers().replace(/[\n\r]/g, '')
+                });
+                return myjson;
+            }, this);
+
+            this.xmlData129 = ko.computed(function () {
+                var myxml = '<FobOriginWebService129PLabelInput xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/VSM">';
+                if (self.CLIN()) {
+                    myxml = myxml + "<CLIN>" + self.CLIN() + "</CLIN>";
+                }
+                if (self.CurDt1()) {
+                    myxml = myxml + "<CurDt1>" + self.CurDt1() + "</CurDt1>";
+                }
+                if (self.CurDt2()) {
+                    myxml = myxml + "<CurDt2>" + self.CurDt2() + "</CurDt2>";
+                }
+                if (self.CureInsp1()) {
+                    myxml = myxml + "<CureInsp1>" + self.CureInsp1() + "</CureInsp1>";
+                }
+                if (self.CureInsp2()) {
+                    myxml = myxml + "<CureInsp2>" + self.CureInsp2() + "</CureInsp2>";
+                }
+                if (self.DatePreserved()) {
+                    myxml = myxml + "<DatePreserved>" + self.DatePreserved() + "</DatePreserved>";
+                }
+                if (self.DesiredLabelSize()) {
+                    myxml = myxml + "<DesiredLabelSize>" + self.DesiredLabelSize() + "</DesiredLabelSize>";
+                }
+                if (self.Exp1()) {
+                    myxml = myxml + "<Exp1>" + self.Exp1() + "</Exp1>";
+                }
+                if (self.Exp2()) {
+                    myxml = myxml + "<Exp2>" + self.Exp2() + "</Exp2>";
+                }
+
+                if (self.Lot()) {
+                    myxml = myxml + "<Lot>" + self.Lot() + "</Lot>";
+                }
+                if (self.PartNumber()) {
+                    myxml = myxml + "<PartNumber>" + self.PartNumber() + "</PartNumber>";
+                }
+
+                if (self.Preservation()) {
+                    myxml = myxml + "<Preservation>" + self.Preservation() + "</Preservation>";
+                }
+
+                if (self.PurchaseOrder()) {
+                    myxml = myxml + "<PurchaseOrder>" + self.PurchaseOrder() + "</PurchaseOrder>";
+                }
+                if (self.Quantity()) {
+                    myxml = myxml + "<Quantity>" + self.Quantity() + "</Quantity>";
+                }
+                if (self.Release()) {
+                    myxml = myxml + "<Release>" + self.Release() + "</Release>";
+                }
+                if (self.RequisitonNumber()) {
+                    myxml = myxml + "<RequisitonNumber>" + self.RequisitonNumber() + "</RequisitonNumber>";
+                }
+                if (self.SerialNumbers()) {
+                    myxml = myxml + "<SerialNumbers>" + self.SerialNumbers().replace(/[\n\r]/g, '') + "</SerialNumbers>";
+                }
+                if (self.ShelfDate1()) {
+                    myxml = myxml + "<ShelfDate1>" + self.ShelfDate1() + "</ShelfDate1>";
+                }
+                if (self.ShelfDate2()) {
+                    myxml = myxml + "<ShelfDate2>" + self.ShelfDate2() + "</ShelfDate2>";
+                }
+
+                if (self.ShelfType()) {
+                    myxml = myxml + "<ShelfType>" + self.ShelfType() + "</ShelfType>";
+                }
+                if (self.UIDetail()) {
+                    myxml = myxml + "<UIDetail>" + self.UIDetail() + "</UIDetail>";
+                }
+                if (self.UnitPerInt()) {
+                    myxml = myxml + "<UnitPerInt>" + self.UnitPerInt() + "</UnitPerInt>";
+                }
+                myxml = myxml + "</FobOriginWebService129PLabelInput>";
+                return myxml;
+            }, this);
+
+            this.url = ko.computed(function () {
+                return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin/" + this.scn();
+            }, this);
+
+            this.BOLurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintBol/" + this.scn(); }, this);
+            this.MSLurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintMSL/" + this.scn(); }, this);
+            this.ContainerIdLabelurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintContainerIdLabel/" + this.scn(); }, this);
+            this.SmallParcelLabelurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintSmallParcelLabel/" + this.scn(); }, this);
+            this.PackingListurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintPackingList/" + this.scn(); }, this);
+            this.CommercialInvoiceurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintCommercialInvoice/" + this.scn(); }, this);
+            this.NineteenSevenurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintNineteenSeven/" + this.scn(); }, this);
+            this.AllDocsurl = ko.computed(function () { return "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintAllDocs/" + this.scn(); }, this);
+            this.xmlData = ko.computed(function () {
+                var PurchaseOrders = self.PurchaseOrders();
+                var x2js = new X2JS();
+                var myxml = '<FobOriginWebServiceInput xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/VSM">'
+
+                if (self.CarrierRemarksLine1()) {
+                    myxml = myxml + "<CarrierRemarksLine1>" + self.CarrierRemarksLine1() + "</CarrierRemarksLine1>";
+                }
+
+                if (self.CarrierRemarksLine2()) {
+                    myxml = myxml + "<CarrierRemarksLine2>" + self.CarrierRemarksLine2() + "</CarrierRemarksLine2>";
+                }
+
+                if (PurchaseOrders.length >= 1) {
+                    myxml = myxml + "<FobOriginWebServicePos>"
+                    PurchaseOrders.forEach(function (item) {
+
+                        myxml = myxml + "<FobOriginWebServicePo>";
+                        if (item.CLIN()) {
+                            myxml = myxml + "<CLIN>" + item.CLIN() + "</CLIN>";
+                        }
+                        if (item.Height()) {
+                            myxml = myxml + "<Height>" + item.Height() + "</Height>";
+                        }
+                        if (item.Length()) {
+                            myxml = myxml + "<Length>" + item.Length() + "</Length>";
+                        }
+                        if (item.PcsPerPallet()) {
+                            myxml = myxml + "<PcsPerPallet>" + item.PcsPerPallet() + "</PcsPerPallet>";
+                        }
+
+                        if (item.PurchaseOrder()) {
+                            myxml = myxml + "<PurchaseOrder>" + item.PurchaseOrder() + "</PurchaseOrder>";
+                        }
+                        if (item.Quantity()) {
+                            myxml = myxml + "<Quantity>" + item.Quantity() + "</Quantity>";
+                        }
+                        if (item.Release()) {
+                            myxml = myxml + "<Release>" + item.Release() + "</Release>";
+                        }
+                        if (item.RequisitonNumber()) {
+                            myxml = myxml + "<RequisitonNumber>" + item.RequisitonNumber() + "</RequisitonNumber>";
+                        }
+
+                        if (item.TypePackPerPallet()) {
+                            myxml = myxml + "<TypePackPerPallet>" + item.TypePackPerPallet() + "</TypePackPerPallet>";
+                        }
+                        if (item.Weight()) {
+                            myxml = myxml + "<Weight>" + item.Weight() + "</Weight>";
+                        }
+                        if (item.Width()) {
+                            myxml = myxml + "<Width>" + item.Width() + "</Width>";
+                        }
+
+                        myxml = myxml + "</FobOriginWebServicePo>";
+                    });
+                    myxml = myxml + "</FobOriginWebServicePos>";
+                }
+
+                if (self.PickupDate()) {
+                    myxml = myxml + "<PickupDate>" + self.PickupDate() + "</PickupDate>";
+                }
+
+                if (self.ProcessingTypeInd()) {
+                    myxml = myxml + "<ProcessingTypeInd>" + self.ProcessingTypeInd() + "</ProcessingTypeInd>";
+                }
+                if (self.TypeEquipmentInd()) {
+                    myxml = myxml + "<TypeEquipmentInd>" + self.TypeEquipmentInd() + "</TypeEquipmentInd>";
+                }
+
+                if (self.TypePackInd()) {
+                    myxml = myxml + "<TypePackInd>" + self.TypePackInd() + "</TypePackInd>";
+                }
+
+                if (self.VariationPercent()) {
+                    myxml = myxml + "<VariationPercent>" + self.VariationPercent() + "</VariationPercent>";
+                }
+
+                if (self.VarianceProcessingInd()) {
+                    myxml = myxml + "<VarianceProcessingInd>" + self.VarianceProcessingInd() + "</VarianceProcessingInd>";
+                }
+
+                if (self.VendorReferenceNumber()) {
+                    myxml = myxml + "<VendorReferenceNumber>" + self.VendorReferenceNumber() + "</VendorReferenceNumber>";
+                }
+
+
+                myxml = myxml + "</FobOriginWebServiceInput>";
+                return myxml;
+            }, this);
+
+
+            this.addPo = function () {
+                this.showForm(true);
+
+            }
+
+            this.logon = function () {
+                $('#signin').prop('disabled', true);
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin",
+                    type: "GET",
+                    datatype: "json",
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    beforeSend: function (xhr) {
+                        $('#logonSpinner').show();
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                    },
+                    success: function (data) {
+                        self.loggedon(true);
+                    },
+                    error: function (xhr, status, error) {
+                        $('#signin').prop('disabled', false);
+                        $('#logonSpinner').hide();
+                        $('#logonError').show();
+                        self.logOnErrorMessage("Status: " + xhr.status + " Message: " + xhr.statusText)
+                    }
+                });
+
+
+            }
+
+            this.InsertRecord = function () {
+                this.showForm(false);
+                $('#myModal').modal('hide');
+                self.PurchaseOrders.push(new po(self.RequisitonNumber(), self.PurchaseOrder(), self.CLIN(), self.Release(), self.Quantity(), self.Weight(), self.Length(), self.Width(), self.Height(), self.PcsPerPallet(), self.TypePackPerPallet()));
+                self.RequisitonNumber("");
+                self.PurchaseOrder("");
+                self.CLIN("");
+                self.Release("");
+                self.Quantity("");
+                self.Weight("");
+                self.Length("");
+                self.Width("");
+                self.Height("");
+                self.PcsPerPallet("");
+                self.TypePackPerPallet("");
+
+            }
+
+            this.removeRecord = function (record) { self.PurchaseOrders.remove(record) };
+
+            this.submitAsXML = function () {
+                self.errors.removeAll();
+                self.hasError(false);
+                self.hasSuccess(false);
+                self.jsonResponse("");
+                self.xmlResponse("");
+                $('#postSpinner').show();
+                var data = self.xmlData();
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin",
+                    data: data,
+                    type: 'POST',
+                    contentType: "text/xml",
+                    dataType: "text",
+                    accepts: {
+                        xml: "text/xml",
+                        text: "text/xml"
+                    },
+                    beforeSend: function (xhr) {
+                        $('#postSpinner').show();
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        self.successMessage("");
+                    },
+                    success: function (result) {
+                        $('#postSpinner').hide();
+                        self.hasSuccess(true);
+                        xmlDoc = $.parseXML(result),
+                        $xml = $(xmlDoc),
+                        $ShpmntCntrlNbr = $xml.find("ShpmntCntrlNbr");
+                        $Tcn = $xml.find("Tcn");
+                        self.successMessage("Success!  scn: " + $ShpmntCntrlNbr.text() + " Tcn: " + $Tcn.text());
+                        self.scn($ShpmntCntrlNbr.text());
+                        self.xmlResponse(JSON.stringify(result));
+
+                    },
+                    error: function (xhr, status, error) {
+                        $('#postSpinner').hide();
+                        self.hasError(true);
+                        self.xmlResponse(JSON.stringify(xhr));
+                        var x2js = new X2JS();
+
+
+                        if (xhr.status == 404) {
+                            self.ErrorHeader('There was an error during the post a 404 error occured. Unable to locate api/WSFobOrigin')
+                            return;
+                        }
+                        self.ErrorHeader('error = ' + error + ' status code = ' + xhr.status);
+                        $('#postSpinner').hide();
+                        self.errors.push({ prop: "error during xml post", errors: [xhr.responseText] });
+                    }
+                });
+            }
+
+
+            this.submit = function () {
+                self.errors.removeAll();
+                self.hasError(false);
+                self.hasSuccess(false);
+                self.jsonResponse("");
+                self.xmlResponse("");
+                $('#postSpinner').show();
+                var data = ko.toJSON({
+                    FobOriginWebServicePos: this.PurchaseOrders,
+                    ProcessingTypeInd: this.ProcessingTypeInd,
+                    VendorReferenceNumber: this.VendorReferenceNumber,
+                    TypeEquipmentInd: this.TypeEquipmentInd,
+                    CarrierRemarksLine1: this.CarrierRemarksLine1,
+                    CarrierRemarksLine2: this.CarrierRemarksLine2,
+                    PickupDate: this.PickupDate,
+                    TypePackInd: this.TypePackInd,
+                    VarianceProcessingInd: this.VarianceProcessingInd,
+                    VariationPercent: this.VariationPercent
+                });
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin",
+                    type: "POST",
+                    data: data,
+                    datatype: "json",
+                    processData: false,
+                    contentType: "application/json; charset=utf-8",
+                    beforeSend: function (xhr) {
+                        $('#postSpinner').show();
+                        self.successMessage("");
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                    },
+
+                    success: function (result) {
+                        $('#postSpinner').hide();
+                        self.jsonResponse(JSON.stringify(result));
+                        var x2js = new X2JS();
+                        self.hasSuccess(true);
+                        self.successMessage("Success!  scn: " + result.ShpmntCntrlNbr + " Tcn: " + result.Tcn);
+                        self.scn(result.ShpmntCntrlNbr);
+                    },
+                    error: function (xhr, status, error) {
+                        $('#postSpinner').hide();
+                        self.hasError(true);
+                        self.jsonResponse(JSON.stringify(xhr));
+                        var x2js = new X2JS();
+                        if (xhr.status == 404) {
+                            self.ErrorHeader('There was an error during the post a 404 error occured. Unable to locate api/WSFobOrigin')
+                            return;
+                        }
+                        self.ErrorHeader('error = ' + error + ' status code = ' + xhr.status);
+                        var err = eval("(" + xhr.responseText + ")");
+                        for (p in err.ModelState) {
+                            if (err.ModelState.hasOwnProperty(p)) {
+                                self.errors.push({ prop: p, errors: err.ModelState[p] });
+                            }
+                        }
+                    }
+                });
+            }
+
+            this.getStatusJson = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin/" + self.scn(),
+                    type: "GET",
+                    datatype: "json",
+                    beforeSend: function (xhr) {
+                        $('#getStatusSpinner').show();
+                        self.jsonStatusResponse("");
+                        self.xmlStatusResponse("");
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('a[href="#homestatus"]').tab('show');
+                    },
+                    success: function (data) {
+                        $('#getStatusSpinner').hide();
+                        self.jsonStatusResponse(JSON.stringify(data));
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getStatusSpinner').hide();
+                        self.jsonStatusResponse("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                    }
+                });
+            }
+            this.getStatusXML = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin/" + self.scn(),
+                    type: "GET",
+                    contentType: "text/xml",
+                    dataType: "text",
+                    accepts: {
+                        xml: "text/xml",
+                        text: "text/xml"
+                    },
+                    beforeSend: function (xhr) {
+                        $('#getStatusSpinner').show();
+                        self.jsonStatusResponse("");
+                        self.xmlStatusResponse("");
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('a[href="#profilestatus"]').tab('show');
+                    },
+                    success: function (data) {
+                        $('#getStatusSpinner').hide();
+                        self.xmlStatusResponse(JSON.stringify(data));
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getStatusSpinner').hide();
+                        self.xmlStatusResponse("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                    }
+                });
+
+            }
+
+            this.getBOL = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintBol/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getDocSpinner').show();
+                        self.docError("");
+                        $('#docErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getDocSpinner').hide();
+                        window.open(self.BOLurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getStatusSpinner').hide();
+                        self.docError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#getDocSpinner').hide();
+                        $('#docErrorAlert').show();
+                    }
+                });
+            }
+
+            this.getPackingList = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintPackingList/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getPackingListSpinner').show();
+                        self.packingListError("");
+                        $('#packingListErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getPackingListSpinner').hide();
+                        window.open(self.PackingListurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getPackingListSpinner').hide();
+                        self.packingListError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#getPackingListSpinner').hide();
+                        $('#packingListErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.getMSL = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintMSL/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getMSLSpinner').show();
+                        self.MSLError("");
+                        $('#MSLErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getMSLSpinner').hide();
+                        window.open(self.MSLurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getMSLSpinner').hide();
+                        self.MSLError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#getMSLSpinner').hide();
+                        $('#MSLErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.getContainerIdLabel = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintContainerIdLabel/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getContainerIdLabelSpinner').show();
+                        self.ContainerIdLabelError("");
+                        $('#ContainerIdLabelErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getContainerIdLabelSpinner').hide();
+                        window.open(self.ContainerIdLabelurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getContainerIdLabelSpinner').hide();
+                        self.ContainerIdLabelError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#getContainerIdLabelSpinner').hide();
+                        $('#ContainerIdLabelErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.getSmallParcelLabel = function () {
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintSmallParcelLabel/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getSmallParcelLabelSpinner').show();
+                        self.SmallParcelLabelError("");
+                        $('#SmallParcelLabelErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getSmallParcelLabelSpinner').hide();
+                        window.open(self.SmallParcelLabelurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getSmallParcelLabelSpinner').hide();
+                        self.SmallParcelLabelError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#SmallParcelLabelErrorAlert').show();
+                    }
+                });
+            }
+
+            this.getCommercialInvoice = function () {
+
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintCommercialInvoice/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getCommercialInvoiceSpinner').show();
+                        self.CommercialInvoiceError("");
+                        $('#CommercialInvoiceErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getCommercialInvoiceSpinner').hide();
+                        window.open(self.CommercialInvoiceurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getCommercialInvoiceSpinner').hide();
+                        self.CommercialInvoiceError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#CommercialInvoiceErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.getNineteenSeven = function () {
+
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintNineteenSeven/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getNineteenSevenSpinner').show();
+                        self.NineteenSevenError("");
+                        $('#NineteenSevenErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getNineteenSevenSpinner').hide();
+                        window.open(self.NineteenSevenurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getNineteenSevenSpinner').hide();
+                        self.NineteenSevenError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#NineteenSevenErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.getAllDocs = function () {
+
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOriginPrintAllDocs/" + self.scn(),
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        $('#getAllDocsSpinner').show();
+                        self.AllDocsError("");
+                        $('#AllDocsErrorAlert').hide();
+                    },
+                    success: function (data) {
+                        $('#getAllDocsSpinner').hide();
+                        window.open(self.AllDocsurl(), '_blank');
+                    },
+                    error: function (xhr, status, error) {
+                        $('#getAllDocsSpinner').hide();
+                        self.AllDocsError("Xhr: " + JSON.stringify(xhr) + " \n Status: " + JSON.stringify(status) + " \n Error: " + JSON.stringify(error));
+                        $('#AllDocsErrorAlert').show();
+                    }
+                });
+
+            }
+
+            this.submit129Json = function () {
+
+                self.errors129.removeAll();
+                self.hasError129(false);
+                self.hasSuccess129(false);
+                self.jsonResponse129("");
+                self.xmlResponse129("");
+                $('#Spinner129').show();
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin129Label",
+                    type: "POST",
+                    data: self.jsonData129(),
+                    datatype: "json",
+                    processData: false,
+                    contentType: "application/json; charset=utf-8",
+                    beforeSend: function (xhr) {
+                        $('#Spinner129').show();
+                        self.successMessage129("");
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                    },
+
+                    success: function (result) {
+                        $('#Spinner129').hide();
+                        self.jsonResponse129(JSON.stringify(result));
+                        self.hasSuccess129(true);
+                        self.successMessage129("Success! Please view the response in the JSON Response tab below.");
+                        $.each(result.filePaths, function (i, path) {
+                            window.open(path, '_blank');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        $('#Spinner129').hide();
+                        self.hasError129(true);
+                        self.jsonResponse129(JSON.stringify(xhr));
+                        if (xhr.status == 404) {
+                            self.ErrorHeader129('There was an error during the post a 404 error occured. Unable to locate api/WSFobOrigin129Label')
+                            return;
+                        }
+                        self.ErrorHeader129('error = ' + error + ' status code = ' + xhr.status);
+                        var err = eval("(" + xhr.responseText + ")");
+                        self.errors129.push({ prop: "error during json post", errors: [xhr.responseText] });
+                    }
+                });
+
+
+            }
+
+            this.submit129Xml = function () {
+
+                self.errors129.removeAll();
+                self.hasError129(false);
+                self.hasSuccess129(false);
+                self.jsonResponse129("");
+                self.xmlResponse129("");
+                $('#Spinner129').show();
+                var data = self.xmlData129();
+                $.ajax({
+                    url: "https://ncbvsobsidian.dir.ad.dla.mil/specialdev/api/WSFobOrigin129Label",
+                    data: data,
+                    type: 'POST',
+                    contentType: "text/xml",
+                    dataType: "text",
+                    accepts: {
+                        xml: "text/xml",
+                        text: "text/xml"
+                    },
+                    beforeSend: function (xhr) {
+                        $('#Spinner129').show();
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa(self.userName() + ":" + self.password()));
+                        self.successMessage("");
+                    },
+                    success: function (result) {
+                        $('#Spinner129').hide();
+                        self.hasSuccess129(true);
+                        self.successMessage129("Success! Please view the response in the XML Response tab below.");
+                        self.xmlResponse129(JSON.stringify(result));
+                        xmlDoc = $.parseXML(result),
+                        $xml = $(xmlDoc),
+                        $filePaths = $xml.find("filePaths");
+                        $filePaths.children().each(function () {
+                            window.open($(this).text(), '_blank');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        $('#Spinner129').hide();
+                        self.hasError129(true);
+                        self.xmlResponse129(JSON.stringify(xhr));
+
+                        if (xhr.status == 404) {
+                            self.ErrorHeader('There was an error during the post a 404 error occured. Unable to locate api/WSFobOrigin129Label')
+                            return;
+                        }
+                        self.ErrorHeader129('error = ' + error + ' status code = ' + xhr.status);
+                        $('#129Spinner').hide();
+                        self.errors129.push({ prop: "error during xml post", errors: [xhr.responseText] });
+                    }
+                });
+
+
+
+            }
+
+
+
+
+
+
+        }
+        var mymodel = new viewModel();
+        $(function () {
+
+            var options = {
+                html: true,
+                placement: 'right',
+                container: 'body'
+            };
+
+            $('.dismissablePopover').popover(options);
+            ko.applyBindings(mymodel);
+            $('.alertbox').show();
+            $('#pageLoadSpinner').hide();
+            $('#logonSpinner').hide();
+            $('#mytable').show();
+            $('#PickupDate').datepicker({ dateFormat: 'dd/mm/yy' });
+            $('#signin').prop('disabled', false);
+            $("#tabs").tabs();
+
+        });
+    </script>
+</body>
+</html>
